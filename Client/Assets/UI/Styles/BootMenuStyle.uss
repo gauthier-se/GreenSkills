@@ -1,0 +1,14 @@
+#root-container {
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(20, 20, 30); 
+}
+
+.title-green {
+    color: rgb(0, 255, 0);
+    font-size: 48px;               
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;        
+    margin: 20px;                 
+}
