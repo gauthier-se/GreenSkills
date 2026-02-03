@@ -1,0 +1,52 @@
+{
+	"levels": [
+		{
+			"levelId": 1,
+			"theme": "Tri des Déchets",
+			"questions": [
+				{
+					"questionText": "Dans quelle poubelle va la bouteille en verre ?",
+					"options": ["Verte", "Jaune", "Bleue"],
+					"correctOptionIndex": 0,
+					"explanation": "Le verre se recycle à l'infini !",
+					"difficulty": 0,
+					"category": 0
+				},
+				{
+					"questionText": "Le carton à pizza gras se recycle-t-il ?",
+					"options": ["Oui", "Non", "Seulement le couvercle"],
+					"correctOptionIndex": 1,
+					"explanation": "Le gras souille les fibres du carton, le rendant impropre au recyclage.",
+					"difficulty": 1,
+					"category": 0
+				}
+			]
+		},
+		{
+			"levelId": 2,
+			"theme": "Énergie Numérique",
+			"questions": [
+				{
+					"questionText": "Quel appareil consomme le plus en veille ?",
+					"options": ["Box Internet", "Télévision", "Micro-ondes"],
+					"correctOptionIndex": 0,
+					"explanation": "Une box internet consomme autant qu'un frigo sur une année !",
+					"difficulty": 1,
+					"category": 3
+				},
+				{
+					"questionText": "Envoyer un e-mail avec une pièce jointe émet autant de CO2 que...",
+					"options": [
+						"Une ampoule allumée 1h",
+						"Une voiture sur 1km",
+						"Une respiration"
+					],
+					"correctOptionIndex": 0,
+					"explanation": "Le stockage des données dans les datacenters est très énergivore.",
+					"difficulty": 2,
+					"category": 3
+				}
+			]
+		}
+	]
+}

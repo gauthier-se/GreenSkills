@@ -1,12 +1,22 @@
 using UnityEngine;
 
-public class InputManager : MonoBehaviour
+namespace Managers
 {
-    public void ProcessInputs()
+    /// <summary>
+    /// Handles player input processing for the game.
+    /// </summary>
+    public class InputManager : MonoBehaviour
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        /// <summary>
+        /// Processes player inputs each frame.
+        /// Called from Update loop when needed.
+        /// </summary>
+        public void ProcessInputs()
         {
-            Debug.Log("Space key pressed");
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Debug.Log("Space key pressed");
+            }
         }
     }
 }
