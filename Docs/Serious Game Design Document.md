@@ -537,37 +537,37 @@ Le cycle de mise à jour post-lancement est conçu pour être agile, grâce à l
 
 ![image](mockups/hub.jpg)
 
-    - _Vue principale :_ Vue isométrique du bureau actuel du joueur.
+- _Vue principale :_ Vue isométrique du bureau actuel du joueur.
 
-    - _Zone centrale :_ Le décor qui change selon le niveau.
+- _Zone centrale :_ Le décor qui change selon le niveau.
 
-    - _Overlay :_ Le chemin de progression avec des nœuds cliquables.
+- _Overlay :_ Le chemin de progression avec des nœuds cliquables.
 
-    - _Header :_ Jauge de niveau, compteur de cœurs, indicateur de série.
+- _Header :_ Jauge de niveau, compteur de cœurs, indicateur de série.
 
-    - _Footer :_ Boutons de navigation.
+- _Footer :_ Boutons de navigation.
 
 - **Écran 2 : Le jeu**
 
 ![image](mockups/question.jpg)
 
-    - _Zone supérieure :_ Barre de progression de la leçon en cours et bouton "pause".
+- _Zone supérieure :_ Barre de progression de la leçon en cours et bouton "pause".
 
-    - _Zone centrale :_ L'élément interactif.
+- _Zone centrale :_ L'élément interactif.
 
-    - _Zone inférieure :_ Boutons de réponse ou zone de drop pour le tri.
+- _Zone inférieure :_ Boutons de réponse ou zone de drop pour le tri.
 
-    - _Feedback :_ Un personnage apparaît brièvement sur le côté pour valider ou corriger.
+- _Feedback :_ Un personnage apparaît brièvement sur le côté pour valider ou corriger.
 
 - **Écran 3 : Résultat**
 
 ![image](mockups/victory.jpg)
 
-    - _Visuel :_ Animation de coffre ou de confettis.
+- _Visuel :_ Animation de coffre ou de confettis.
 
-    - _Données :_ Score obtenu, gain d'XP, confirmation de la série journalière.
+- _Données :_ Score obtenu, gain d'XP, confirmation de la série journalière.
 
-    - _Call-to-Action :_ Bouton "continuer" ou "rejouer".
+- _Call-to-Action :_ Bouton "continuer" ou "rejouer".
 
 ### 11.3 Liste des besoins techniques
 
