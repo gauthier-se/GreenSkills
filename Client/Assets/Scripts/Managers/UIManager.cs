@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -64,33 +63,18 @@ namespace Managers
         }
 
         /// <summary>
-        /// Registers this UIManager with the GameManager and triggers gameplay start.
-        /// This implements the self-registration pattern for scene transitions.
-        /// Only triggers gameplay if we're in the Game scene (not the MainMenu).
+        /// Registers this UIManager with the GameManager.
         /// </summary>
         private void Start()
         {
-            // Register with the GameManager singleton
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.uiManager = this;
-                Debug.Log("UIManager registered with GameManager.");
-
-                // Only trigger gameplay start if we're in the Game scene
-                // Check if this UIManager has question UI elements assigned (Game scene specific)
-                if (questionText != null && answerButtons != null && answerButtons.Count > 0)
-                {
-                    Debug.Log("UIManager detected in Game scene. Starting gameplay...");
-                    GameManager.Instance.StartLevelGameplay();
-                }
-                else
-                {
-                    Debug.Log("UIManager detected in a scene without quiz interface (probably MainMenu).");
-                }
+                Debug.Log("[UIManager] Registered with GameManager.");
             }
             else
             {
-                Debug.LogWarning("GameManager.Instance is null! UIManager could not register.");
+                Debug.LogWarning("[UIManager] GameManager.Instance is null!");
             }
         }
 
@@ -209,97 +193,6 @@ namespace Managers
             if (gameOverPanel != null) gameOverPanel.SetActive(false);
             if (victoryPanel != null) victoryPanel.SetActive(false);
             if (quizPanel != null) quizPanel.SetActive(true);
-        }
-
-        /// <summary>
-        /// Updates the question UI with data from a QuestionData object.
-        /// Updates the question text, image, and answer button texts.
-        /// </summary>
-        /// <param name="data">The QuestionData to display.</param>
-        public void UpdateQuestionUI(QuestionData data)
-        {
-            if (data == null)
-            {
-                Debug.LogError("QuestionData is null!");
-                return;
-            }
-
-            if (questionText != null)
-            {
-                questionText.text = data.questionText;
-            }
-            else
-            {
-                Debug.LogWarning("questionText is not assigned!");
-            }
-
-            if (questionImage != null && data.image != null)
-            {
-                questionImage.sprite = data.image;
-                questionImage.gameObject.SetActive(true);
-            }
-            else if (questionImage != null && data.image == null)
-            {
-                questionImage.gameObject.SetActive(false);
-            }
-
-            if (answerButtonTexts != null && answerButtonTexts.Count > 0)
-            {
-                for (int i = 0; i < answerButtonTexts.Count && i < data.options.Count; i++)
-                {
-                    answerButtonTexts[i].text = data.options[i];
-
-                    if (answerButtons != null && i < answerButtons.Count)
-                    {
-                        answerButtons[i].gameObject.SetActive(true);
-
-                        // Remove previous listeners to avoid duplicate calls
-                        answerButtons[i].onClick.RemoveAllListeners();
-
-                        // Create local copy to avoid closure issue
-                        int index = i;
-                        answerButtons[i].onClick.AddListener(() => GameManager.Instance.SubmitAnswer(index));
-                    }
-                }
-
-                if (answerButtons != null)
-                {
-                    for (int i = data.options.Count; i < answerButtons.Count; i++)
-                    {
-                        answerButtons[i].onClick.RemoveAllListeners();
-                        answerButtons[i].gameObject.SetActive(false);
-                    }
-                }
-            }
-            else if (answerButtons != null && answerButtons.Count > 0)
-            {
-                for (int i = 0; i < answerButtons.Count && i < data.options.Count; i++)
-                {
-                    TextMeshProUGUI buttonText = answerButtons[i].GetComponentInChildren<TextMeshProUGUI>();
-                    if (buttonText != null)
-                    {
-                        buttonText.text = data.options[i];
-                    }
-                    answerButtons[i].gameObject.SetActive(true);
-
-                    // Remove previous listeners to avoid duplicate calls
-                    answerButtons[i].onClick.RemoveAllListeners();
-
-                    // Create local copy to avoid closure issue
-                    int index = i;
-                    answerButtons[i].onClick.AddListener(() => GameManager.Instance.SubmitAnswer(index));
-                }
-
-                for (int i = data.options.Count; i < answerButtons.Count; i++)
-                {
-                    answerButtons[i].onClick.RemoveAllListeners();
-                    answerButtons[i].gameObject.SetActive(false);
-                }
-            }
-            else
-            {
-                Debug.LogWarning("No answer buttons are assigned!");
-            }
         }
 
         /// <summary>

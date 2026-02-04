@@ -3,8 +3,9 @@
 		{
 			"levelId": 1,
 			"theme": "Tri des Déchets",
-			"questions": [
+			"exercises": [
 				{
+					"exerciseType": "quiz",
 					"questionText": "Dans quelle poubelle va la bouteille en verre ?",
 					"options": ["Verte", "Jaune", "Bleue"],
 					"correctOptionIndex": 0,
@@ -13,10 +14,27 @@
 					"category": 0
 				},
 				{
-					"questionText": "Le carton à pizza gras se recycle-t-il ?",
-					"options": ["Oui", "Non", "Seulement le couvercle"],
-					"correctOptionIndex": 1,
+					"exerciseType": "trueFalse",
+					"statement": "Le carton à pizza gras peut être recyclé avec les autres cartons.",
+					"isTrue": false,
 					"explanation": "Le gras souille les fibres du carton, le rendant impropre au recyclage.",
+					"difficulty": 1,
+					"category": 0
+				},
+				{
+					"exerciseType": "sorting",
+					"instruction": "Triez ces déchets dans la bonne poubelle",
+					"categories": [
+						{ "categoryName": "Recyclable", "categoryColor": "#4CAF50" },
+						{ "categoryName": "Non recyclable", "categoryColor": "#F44336" }
+					],
+					"items": [
+						{ "itemName": "Bouteille plastique", "correctCategoryIndex": 0 },
+						{ "itemName": "Mouchoir usagé", "correctCategoryIndex": 1 },
+						{ "itemName": "Journal", "correctCategoryIndex": 0 },
+						{ "itemName": "Vaisselle cassée", "correctCategoryIndex": 1 }
+					],
+					"explanation": "Les matières souillées ou certains types de verre ne sont pas recyclables.",
 					"difficulty": 1,
 					"category": 0
 				}
@@ -25,8 +43,9 @@
 		{
 			"levelId": 2,
 			"theme": "Énergie Numérique",
-			"questions": [
+			"exercises": [
 				{
+					"exerciseType": "quiz",
 					"questionText": "Quel appareil consomme le plus en veille ?",
 					"options": ["Box Internet", "Télévision", "Micro-ondes"],
 					"correctOptionIndex": 0,
@@ -35,16 +54,125 @@
 					"category": 3
 				},
 				{
-					"questionText": "Envoyer un e-mail avec une pièce jointe émet autant de CO2 que...",
-					"options": [
-						"Une ampoule allumée 1h",
-						"Une voiture sur 1km",
-						"Une respiration"
+					"exerciseType": "trueFalse",
+					"statement": "Laisser un écran en veille ne consomme aucune énergie.",
+					"isTrue": false,
+					"explanation": "Un écran en veille peut consommer jusqu'à 50% de l'énergie d'un écran actif.",
+					"difficulty": 0,
+					"category": 3
+				},
+				{
+					"exerciseType": "fillInBlank",
+					"sentenceWithBlanks": "Le {0} est la pratique d'utiliser les technologies numériques de manière responsable pour réduire leur impact {1}.",
+					"correctAnswers": ["Green IT", "environnemental"],
+					"wordOptions": [
+						"Green IT",
+						"Cloud Computing",
+						"environnemental",
+						"économique",
+						"Big Data",
+						"social"
 					],
-					"correctOptionIndex": 0,
-					"explanation": "Le stockage des données dans les datacenters est très énergivore.",
+					"caseSensitive": false,
+					"explanation": "Le Green IT (ou informatique verte) vise à réduire l'empreinte écologique du numérique.",
 					"difficulty": 2,
 					"category": 3
+				},
+				{
+					"exerciseType": "matching",
+					"instruction": "Reliez chaque action à son impact écologique",
+					"leftColumnHeader": "Action",
+					"rightColumnHeader": "Impact",
+					"pairs": [
+						{
+							"leftItem": "Supprimer les vieux emails",
+							"rightItem": "-10g CO2/email"
+						},
+						{
+							"leftItem": "Éteindre la box la nuit",
+							"rightItem": "-65 kWh/an"
+						},
+						{
+							"leftItem": "Utiliser le WiFi vs 4G",
+							"rightItem": "20x moins d'énergie"
+						},
+						{
+							"leftItem": "Compresser les images",
+							"rightItem": "Réduction bande passante"
+						}
+					],
+					"shuffleRightColumn": true,
+					"explanation": "Chaque geste numérique a un impact mesurable sur l'environnement.",
+					"difficulty": 2,
+					"category": 3
+				}
+			]
+		},
+		{
+			"levelId": 3,
+			"theme": "RSE Fondamentaux",
+			"exercises": [
+				{
+					"exerciseType": "fillInBlank",
+					"sentenceWithBlanks": "La RSE repose sur trois piliers : {0}, {1} et {2}.",
+					"correctAnswers": ["économique", "social", "environnemental"],
+					"wordOptions": [
+						"économique",
+						"social",
+						"environnemental",
+						"politique",
+						"technologique",
+						"culturel"
+					],
+					"caseSensitive": false,
+					"explanation": "Les trois piliers de la RSE forment le concept de développement durable.",
+					"difficulty": 1,
+					"category": 0
+				},
+				{
+					"exerciseType": "trueFalse",
+					"statement": "La RSE est obligatoire uniquement pour les grandes entreprises.",
+					"isTrue": false,
+					"explanation": "La RSE est une démarche volontaire pour toutes les entreprises, quelle que soit leur taille.",
+					"difficulty": 1,
+					"category": 0
+				},
+				{
+					"exerciseType": "quiz",
+					"questionText": "Que signifie l'acronyme RSE ?",
+					"options": [
+						"Responsabilité Sociétale des Entreprises",
+						"Règlement Social Européen",
+						"Rapport Stratégique Environnemental"
+					],
+					"correctOptionIndex": 0,
+					"explanation": "La RSE désigne l'intégration volontaire des préoccupations sociales et environnementales par les entreprises.",
+					"difficulty": 0,
+					"category": 0
+				},
+				{
+					"exerciseType": "matching",
+					"instruction": "Associez chaque pilier RSE à son domaine d'action",
+					"leftColumnHeader": "Pilier",
+					"rightColumnHeader": "Exemple d'action",
+					"pairs": [
+						{
+							"leftItem": "Environnemental",
+							"rightItem": "Réduire les émissions CO2"
+						},
+						{
+							"leftItem": "Social",
+							"rightItem": "Améliorer les conditions de travail"
+						},
+						{
+							"leftItem": "Économique",
+							"rightItem": "Pratiques d'achats responsables"
+						}
+					],
+					"shuffleRightColumn": true,
+					"explanation": "Chaque pilier de la RSE englobe des actions concrètes pour l'entreprise.",
+					"difficulty": 1,
+					"category": 0
 				}
 			]
 		}
