@@ -1,0 +1,34 @@
+meta {
+  name: Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "player@greenskills.com",
+    "password": "password123"
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.token: isDefined
+  res.body.user.id: isDefined
+  res.body.user.email: eq player@greenskills.com
+  res.body.user.username: isDefined
+  res.body.user.createdAt: isDefined
+}
+
+script:post-response {
+  if (res.status === 200) {
+    bru.setEnvVar("authToken", res.body.token);
+    bru.setEnvVar("userId", res.body.user.id);
+  }
+}

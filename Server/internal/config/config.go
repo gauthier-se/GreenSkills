@@ -3,7 +3,9 @@ package config
 import (
 	"log/slog"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -13,6 +15,7 @@ type Config struct {
 	Port               string
 	DatabaseURL        string
 	JWTSecret          string
+	JWTExpiry          time.Duration
 	CORSAllowedOrigins []string
 	Env                string
 }
@@ -28,6 +31,7 @@ func Load() *Config {
 		Port:               getEnv("PORT", "8080"),
 		DatabaseURL:        getEnv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/greenskills?sslmode=disable"),
 		JWTSecret:          getEnv("JWT_SECRET", ""),
+		JWTExpiry:          getEnvDuration("JWT_EXPIRY_HOURS", 24),
 		CORSAllowedOrigins: getEnvSlice("CORS_ALLOWED_ORIGINS", []string{"http://localhost:*"}),
 		Env:                getEnv("ENV", "development"),
 	}
@@ -57,4 +61,13 @@ func getEnvSlice(key string, fallback []string) []string {
 		return result
 	}
 	return fallback
+}
+
+func getEnvDuration(key string, fallbackHours int) time.Duration {
+	if val := os.Getenv(key); val != "" {
+		if hours, err := strconv.Atoi(val); err == nil {
+			return time.Duration(hours) * time.Hour
+		}
+	}
+	return time.Duration(fallbackHours) * time.Hour
 }

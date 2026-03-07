@@ -11,6 +11,7 @@ import (
 
 	"github.com/gauthier-se/GreenSkills-API/internal/config"
 	"github.com/gauthier-se/GreenSkills-API/internal/database"
+	"github.com/gauthier-se/GreenSkills-API/internal/db"
 	"github.com/gauthier-se/GreenSkills-API/internal/router"
 	"github.com/gauthier-se/GreenSkills-API/migrations"
 )
@@ -43,9 +44,15 @@ func main() {
 	}
 
 	// Build router
-	r := router.New(router.Config{
+	routerCfg := router.Config{
 		CORSAllowedOrigins: cfg.CORSAllowedOrigins,
-	})
+		JWTSecret:          cfg.JWTSecret,
+		JWTExpiry:          cfg.JWTExpiry,
+	}
+	if dbPool != nil {
+		routerCfg.AuthStore = db.New(dbPool)
+	}
+	r := router.New(routerCfg)
 
 	// Create HTTP server
 	listenAddr := ":" + cfg.Port
