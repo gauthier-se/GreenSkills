@@ -12,6 +12,7 @@ import (
 	"github.com/gauthier-se/GreenSkills-API/internal/config"
 	"github.com/gauthier-se/GreenSkills-API/internal/database"
 	"github.com/gauthier-se/GreenSkills-API/internal/router"
+	"github.com/gauthier-se/GreenSkills-API/migrations"
 )
 
 func main() {
@@ -33,6 +34,12 @@ func main() {
 	} else {
 		slog.Info("Connected to database")
 		defer dbPool.Close()
+
+		// Run database migrations
+		if err := database.RunMigrations(dbPool, migrations.FS); err != nil {
+			slog.Error("Failed to run migrations", "error", err)
+			os.Exit(1)
+		}
 	}
 
 	// Build router
