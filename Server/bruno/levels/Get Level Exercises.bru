@@ -1,0 +1,18 @@
+meta {
+  name: Get Level Exercises
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/levels/1/exercises
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.levelId: eq 1
+  res.body.theme: isDefined
+  res.body.exercises: isDefined
+}

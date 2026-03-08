@@ -1,0 +1,16 @@
+meta {
+  name: Get Level Exercises Not Found
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/levels/999/exercises
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 404
+  res.body.error: eq level not found
+}

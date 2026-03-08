@@ -14,6 +14,7 @@ import (
 type Config struct {
 	CORSAllowedOrigins []string
 	AuthStore          handler.AuthStore
+	LevelsStore        handler.LevelsStore
 	JWTSecret          string
 	JWTExpiry          time.Duration
 }
@@ -47,6 +48,13 @@ func New(cfg Config) *chi.Mux {
 			auth := handler.NewAuthHandler(cfg.AuthStore, cfg.JWTSecret, cfg.JWTExpiry)
 			r.Post("/auth/register", auth.Register())
 			r.Post("/auth/login", auth.Login())
+		}
+
+		// Level routes (public)
+		if cfg.LevelsStore != nil {
+			levels := handler.NewLevelsHandler(cfg.LevelsStore)
+			r.Get("/levels", levels.ListLevels())
+			r.Get("/levels/{id}/exercises", levels.GetLevelExercises())
 		}
 
 		// Protected routes (require valid JWT)
