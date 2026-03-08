@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Data.Exercises;
+using UI;
 using UnityEngine;
 
 namespace UI.Exercises
@@ -26,6 +27,10 @@ namespace UI.Exercises
 
         [Tooltip("Reference to the Matching panel controller")]
         [SerializeField] private MatchingController matchingController;
+
+        [Header("Feedback")]
+        [Tooltip("Reference to the explanation popup controller")]
+        [SerializeField] private ExplanationPopupController explanationPopup;
 
         /// <summary>
         /// Event triggered when an answer is submitted by any exercise controller.
@@ -151,6 +156,14 @@ namespace UI.Exercises
         public void ShowFeedback(bool isCorrect, object correctAnswer = null)
         {
             _currentController?.ShowFeedback(isCorrect, correctAnswer);
+        }
+
+        /// <summary>
+        /// Gets the explanation popup controller.
+        /// </summary>
+        public ExplanationPopupController GetExplanationPopup()
+        {
+            return explanationPopup;
         }
 
         /// <summary>

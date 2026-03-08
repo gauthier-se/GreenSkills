@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Data.Exercises;
+using UI;
 using UI.Exercises;
 using UnityEngine;
 
@@ -37,6 +38,7 @@ namespace Managers
 
         // Exercise system state
         private ExerciseUIController _exerciseUIController;
+        private ExplanationPopupController _explanationPopup;
         private LevelData _currentLevelData;
         private List<BaseExerciseData> _currentExercises;
         private int _currentExerciseIndex;
@@ -129,6 +131,13 @@ namespace Managers
             _exerciseUIController = controller;
             _exerciseUIController.OnAnswerSubmitted += HandleAnswerSubmitted;
 
+            // Get the explanation popup reference
+            _explanationPopup = controller.GetExplanationPopup();
+            if (_explanationPopup == null)
+            {
+                Debug.LogWarning("[GameManager] ExplanationPopupController not found on ExerciseUIController. Explanations will be skipped.");
+            }
+
             Debug.Log("[GameManager] ExerciseUIController registered.");
 
             // Start gameplay if exercises are loaded
@@ -209,6 +218,9 @@ namespace Managers
                 audioManager.PlaySound(isCorrect ? correctSoundName : incorrectSoundName);
             }
 
+            // Show visual feedback on the exercise panel (correct/incorrect highlighting)
+            _exerciseUIController?.ShowFeedback(isCorrect);
+
             if (!isCorrect)
             {
                 _currentLives--;
@@ -221,20 +233,33 @@ namespace Managers
 
                 if (_currentLives <= 0)
                 {
-                    StartCoroutine(WaitAndGameOver());
+                    StartCoroutine(ShowFeedbackAndGameOver(exercise, isCorrect));
                     return;
                 }
             }
 
-            StartCoroutine(WaitAndLoadNextExercise());
+            StartCoroutine(ShowFeedbackAndAdvance(exercise, isCorrect));
         }
 
         /// <summary>
-        /// Waits for feedback delay then loads next exercise.
+        /// Shows the explanation popup, waits for dismissal, then loads the next exercise.
+        /// Falls back to a timed delay if no popup is configured.
         /// </summary>
-        private IEnumerator WaitAndLoadNextExercise()
+        private IEnumerator ShowFeedbackAndAdvance(BaseExerciseData exercise, bool isCorrect)
         {
-            yield return new WaitForSeconds(feedbackDelay);
+            if (_explanationPopup != null && !string.IsNullOrEmpty(exercise.explanation))
+            {
+                // Wait briefly so the player sees the visual feedback before the popup
+                yield return new WaitForSeconds(0.5f);
+
+                _explanationPopup.Show(exercise.explanation, isCorrect);
+                yield return new WaitUntil(() => !_explanationPopup.IsVisible());
+            }
+            else
+            {
+                // Fallback: use the fixed delay if no popup is available
+                yield return new WaitForSeconds(feedbackDelay);
+            }
 
             _exerciseUIController?.ResetCurrentPanel();
             _currentExerciseIndex++;
@@ -250,11 +275,22 @@ namespace Managers
         }
 
         /// <summary>
-        /// Waits for feedback delay then triggers game over.
+        /// Shows the explanation popup, waits for dismissal, then triggers game over.
+        /// Falls back to a timed delay if no popup is configured.
         /// </summary>
-        private IEnumerator WaitAndGameOver()
+        private IEnumerator ShowFeedbackAndGameOver(BaseExerciseData exercise, bool isCorrect)
         {
-            yield return new WaitForSeconds(feedbackDelay);
+            if (_explanationPopup != null && !string.IsNullOrEmpty(exercise.explanation))
+            {
+                yield return new WaitForSeconds(0.5f);
+
+                _explanationPopup.Show(exercise.explanation, isCorrect);
+                yield return new WaitUntil(() => !_explanationPopup.IsVisible());
+            }
+            else
+            {
+                yield return new WaitForSeconds(feedbackDelay);
+            }
 
             Debug.Log("[GameManager] Game Over!");
             OnGameOver();
@@ -349,6 +385,8 @@ namespace Managers
                 _exerciseUIController.OnAnswerSubmitted -= HandleAnswerSubmitted;
                 _exerciseUIController = null;
             }
+
+            _explanationPopup = null;
 
             sceneManager?.LoadScene(mainMenuSceneName);
         }
