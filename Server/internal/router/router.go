@@ -15,6 +15,7 @@ type Config struct {
 	CORSAllowedOrigins []string
 	AuthStore          handler.AuthStore
 	LevelsStore        handler.LevelsStore
+	ProgressStore      handler.ProgressStore
 	JWTSecret          string
 	JWTExpiry          time.Duration
 }
@@ -61,7 +62,13 @@ func New(cfg Config) *chi.Mux {
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.Auth(cfg.JWTSecret))
 
-			// Protected endpoints will be added here (TE-176, TE-177)
+			// User progress routes
+			if cfg.ProgressStore != nil {
+				progress := handler.NewProgressHandler(cfg.ProgressStore)
+				r.Get("/users/me/progress", progress.GetProgress())
+				r.Put("/users/me/progress/{levelId}", progress.SaveProgress())
+				r.Get("/users/me/stats", progress.GetStats())
+			}
 		})
 	})
 

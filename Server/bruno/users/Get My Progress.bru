@@ -1,0 +1,20 @@
+meta {
+  name: Get My Progress
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/users/me/progress
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+assert {
+  res.status: eq 200
+  res.body.progress: isDefined
+}
