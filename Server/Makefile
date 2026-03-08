@@ -1,4 +1,4 @@
-.PHONY: help db-up db-down db-reset run build test test-v test-cover clean
+.PHONY: help db-up db-down db-reset run build vet test test-v test-cover clean
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -18,6 +18,9 @@ run: ## Run the server
 
 build: ## Build the server binary
 	go build -o bin/server ./cmd/server
+
+vet: ## Run go vet static analysis
+	go vet ./...
 
 test: ## Run all tests
 	go test ./...
