@@ -1,0 +1,31 @@
+meta {
+  name: Save Level Progress
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/api/users/me/progress/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "stars": 2,
+    "bestTimeSeconds": 35.5,
+    "unlocked": true,
+    "completed": true
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.levelId: eq 1
+  res.body.stars: isDefined
+  res.body.unlocked: isDefined
+}
