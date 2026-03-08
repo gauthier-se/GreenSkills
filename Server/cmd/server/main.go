@@ -52,6 +52,7 @@ func main() {
 	if dbPool != nil {
 		routerCfg.AuthStore = db.New(dbPool)
 		routerCfg.LevelsStore = db.New(dbPool)
+		routerCfg.ProgressStore = db.New(dbPool)
 	}
 	r := router.New(routerCfg)
 

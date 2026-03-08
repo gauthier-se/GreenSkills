@@ -1,0 +1,22 @@
+meta {
+  name: Get My Stats
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/users/me/stats
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+assert {
+  res.status: eq 200
+  res.body.totalStars: isDefined
+  res.body.levelsCompleted: isDefined
+  res.body.levelsStarted: isDefined
+}
