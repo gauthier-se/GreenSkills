@@ -143,11 +143,18 @@ namespace Managers
 
         /// <summary>
         /// Loads a level from a REST API endpoint.
+        /// Includes the JWT Bearer token if the user is authenticated.
         /// </summary>
         private async Task<LevelData> LoadLevelFromApiAsync(string apiUrl)
         {
             using (UnityWebRequest request = UnityWebRequest.Get(apiUrl))
             {
+                // Attach JWT token for authenticated requests
+                if (AuthManager.Instance != null && AuthManager.Instance.IsAuthenticated)
+                {
+                    request.SetRequestHeader("Authorization", $"Bearer {AuthManager.Instance.Token}");
+                }
+
                 var operation = request.SendWebRequest();
 
                 while (!operation.isDone)

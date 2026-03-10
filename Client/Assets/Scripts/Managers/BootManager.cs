@@ -4,13 +4,14 @@ namespace Managers
 {
     /// <summary>
     /// Boot scene manager responsible for initializing all game managers
-    /// and transitioning to the main menu.
+    /// and transitioning to the appropriate scene based on authentication state.
     /// This should be the first scene loaded when the game starts.
     /// </summary>
     public class BootManager : MonoBehaviour
     {
         [Header("Scene Configuration")]
         [SerializeField] private string mainMenuSceneName = "MainMenu";
+        [SerializeField] private string loginSceneName = "Login";
 
         [Header("Optional: Splash Screen")]
         [SerializeField] private float splashDuration = 1f;
@@ -27,9 +28,9 @@ namespace Managers
             VerifyManagers();
 
             if (showSplash)
-                StartCoroutine(WaitAndLoadMainMenu());
+                StartCoroutine(WaitAndLoadNextScene());
             else
-                LoadMainMenu();
+                LoadNextScene();
         }
 
         private void VerifyManagers()
@@ -37,46 +38,65 @@ namespace Managers
             // Check GameManager
             if (GameManager.Instance != null)
             {
-                if (logInitialization) Debug.Log("[BootManager] ✓ GameManager ready");
+                if (logInitialization) Debug.Log("[BootManager] GameManager ready");
             }
             else
             {
-                Debug.LogError("[BootManager] ✗ GameManager not found!");
+                Debug.LogError("[BootManager] GameManager not found!");
             }
 
             // Check ExerciseManager
             if (ExerciseManager.Instance != null)
             {
-                if (logInitialization) Debug.Log("[BootManager] ✓ ExerciseManager ready");
+                if (logInitialization) Debug.Log("[BootManager] ExerciseManager ready");
             }
             else
             {
-                Debug.LogError("[BootManager] ✗ ExerciseManager not found!");
+                Debug.LogError("[BootManager] ExerciseManager not found!");
+            }
+
+            // Check AuthManager
+            if (AuthManager.Instance != null)
+            {
+                if (logInitialization) Debug.Log("[BootManager] AuthManager ready");
+            }
+            else
+            {
+                Debug.LogError("[BootManager] AuthManager not found!");
             }
         }
 
-        private System.Collections.IEnumerator WaitAndLoadMainMenu()
+        private System.Collections.IEnumerator WaitAndLoadNextScene()
         {
             if (logInitialization)
                 Debug.Log($"[BootManager] Showing splash for {splashDuration}s...");
 
             yield return new WaitForSeconds(splashDuration);
 
-            LoadMainMenu();
+            LoadNextScene();
         }
 
-        private void LoadMainMenu()
+        /// <summary>
+        /// Determines the next scene based on authentication state.
+        /// If the user has a saved token, goes straight to MainMenu.
+        /// Otherwise, shows the Login screen.
+        /// </summary>
+        private void LoadNextScene()
         {
+            bool isAuthenticated = AuthManager.Instance != null && AuthManager.Instance.TryAutoLogin();
+
+            string targetScene = isAuthenticated ? mainMenuSceneName : loginSceneName;
+
             if (logInitialization)
-                Debug.Log($"[BootManager] Loading {mainMenuSceneName}...");
+                Debug.Log($"[BootManager] Authenticated: {isAuthenticated}. Loading {targetScene}...");
 
             if (GameManager.Instance?.sceneManager != null)
             {
-                GameManager.Instance.sceneManager.LoadScene(mainMenuSceneName);
+                GameManager.Instance.sceneManager.LoadScene(targetScene);
             }
             else
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuSceneName);
+                UnityEngine.SceneManagement.SceneManager.LoadScene(targetScene);
             }
         }
     }

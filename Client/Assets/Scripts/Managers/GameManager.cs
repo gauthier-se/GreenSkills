@@ -19,10 +19,12 @@ namespace Managers
         public UIManager uiManager;
         public AudioManager audioManager;
         public SceneManager sceneManager;
+        public AuthManager authManager;
 
         [Header("Scene Names")]
         [SerializeField] private string mainMenuSceneName = "MainMenu";
         [SerializeField] private string gameSceneName = "Game";
+        [SerializeField] private string loginSceneName = "Login";
 
         [Header("Audio Clips")]
         [SerializeField] private string correctSoundName = "Correct";
@@ -389,6 +391,25 @@ namespace Managers
             _explanationPopup = null;
 
             sceneManager?.LoadScene(mainMenuSceneName);
+        }
+
+        /// <summary>
+        /// Logs out the current user and navigates to the login scene.
+        /// </summary>
+        public void Logout()
+        {
+            Debug.Log("[GameManager] Logging out...");
+
+            if (authManager != null)
+            {
+                authManager.Logout();
+            }
+            else if (AuthManager.Instance != null)
+            {
+                AuthManager.Instance.Logout();
+            }
+
+            sceneManager?.LoadScene(loginSceneName);
         }
 
         /// <summary>
