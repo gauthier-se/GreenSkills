@@ -34,6 +34,12 @@ namespace Managers
         [SerializeField] private Button victoryMenuButton;
         [SerializeField] private List<GameObject> victoryStars;
 
+        [Header("Victory Panel - Gamification")]
+        [SerializeField] private TextMeshProUGUI victoryXPText;
+        [SerializeField] private TextMeshProUGUI victoryCoinsText;
+        [SerializeField] private GameObject victoryLevelUpBadge;
+        [SerializeField] private TextMeshProUGUI victoryLevelUpText;
+
         [Header("Quiz Panel (to hide on game end)")]
         [SerializeField] private GameObject quizPanel;
 
@@ -126,12 +132,13 @@ namespace Managers
         }
 
         /// <summary>
-        /// Shows the Victory panel with score, stars, and navigation options.
+        /// Shows the Victory panel with score, stars, gamification rewards, and navigation options.
         /// </summary>
         /// <param name="score">The player's score for this level.</param>
         /// <param name="starsEarned">Number of stars earned (1-3).</param>
         /// <param name="hasNextLevel">Whether there's a next level available.</param>
-        public void ShowVictoryScreen(int score, int starsEarned, bool hasNextLevel)
+        /// <param name="rewards">Gamification rewards earned from this level.</param>
+        public void ShowVictoryScreen(int score, int starsEarned, bool hasNextLevel, LevelRewards rewards = default)
         {
             Debug.Log($"Displaying Victory screen - Score: {score}, Stars: {starsEarned}");
 
@@ -162,6 +169,27 @@ namespace Managers
                             victoryStars[i].SetActive(i < starsEarned);
                         }
                     }
+                }
+
+                // Update gamification reward displays
+                if (victoryXPText != null)
+                {
+                    victoryXPText.text = $"+{rewards.xpEarned} XP";
+                }
+
+                if (victoryCoinsText != null)
+                {
+                    victoryCoinsText.text = $"+{rewards.coinsEarned}";
+                }
+
+                if (victoryLevelUpBadge != null)
+                {
+                    victoryLevelUpBadge.SetActive(rewards.didLevelUp);
+                }
+
+                if (victoryLevelUpText != null && rewards.didLevelUp)
+                {
+                    victoryLevelUpText.text = $"Niveau {rewards.newPlayerLevel} !";
                 }
 
                 // Wire up buttons
