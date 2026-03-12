@@ -64,6 +64,16 @@ namespace Managers
             {
                 Debug.LogError("[BootManager] AuthManager not found!");
             }
+
+            // Check GamificationManager
+            if (GamificationManager.Instance != null)
+            {
+                if (logInitialization) Debug.Log("[BootManager] GamificationManager ready");
+            }
+            else
+            {
+                Debug.LogError("[BootManager] GamificationManager not found!");
+            }
         }
 
         private System.Collections.IEnumerator WaitAndLoadNextScene()

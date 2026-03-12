@@ -20,6 +20,7 @@ namespace Managers
         public AudioManager audioManager;
         public SceneManager sceneManager;
         public AuthManager authManager;
+        public GamificationManager gamificationManager;
 
         [Header("Scene Names")]
         [SerializeField] private string mainMenuSceneName = "MainMenu";
@@ -220,6 +221,12 @@ namespace Managers
                 audioManager.PlaySound(isCorrect ? correctSoundName : incorrectSoundName);
             }
 
+            // Award XP for correct answers
+            if (isCorrect)
+            {
+                gamificationManager?.AwardCorrectAnswerXP();
+            }
+
             // Show visual feedback on the exercise panel (correct/incorrect highlighting)
             _exerciseUIController?.ShowFeedback(isCorrect);
 
@@ -322,6 +329,7 @@ namespace Managers
 
         /// <summary>
         /// Handles level victory.
+        /// Awards gamification rewards and persists star rating.
         /// </summary>
         private void WinLevel()
         {
@@ -347,6 +355,16 @@ namespace Managers
             int score = _currentLives * 100;
             int starsEarned = CalculateStars(_currentLives, maxLives);
 
+            // Persist star rating (only saves if better than previous)
+            LevelScoreManager.SaveLevelStars(_currentLevelId, starsEarned);
+
+            // Award gamification rewards
+            LevelRewards rewards = default;
+            if (gamificationManager != null)
+            {
+                rewards = gamificationManager.AwardLevelCompletion(_currentLives, maxLives);
+            }
+
             if (audioManager != null)
             {
                 audioManager.PlaySound(victorySoundName);
@@ -354,7 +372,7 @@ namespace Managers
 
             if (uiManager != null)
             {
-                uiManager.ShowVictoryScreen(score, starsEarned, hasNextLevel);
+                uiManager.ShowVictoryScreen(score, starsEarned, hasNextLevel, rewards);
             }
         }
 
@@ -464,12 +482,15 @@ namespace Managers
         }
 
         /// <summary>
-        /// Resets all saved progress.
+        /// Resets all saved progress, including gamification data.
         /// </summary>
         public void ResetProgress()
         {
             PlayerPrefs.DeleteKey(HIGHEST_LEVEL_KEY);
             PlayerPrefs.Save();
+
+            gamificationManager?.ResetAll();
+
             Debug.Log("[GameManager] Progress reset!");
         }
 
