@@ -12,7 +12,7 @@ namespace UI.Exercises
     {
         [Header("End Game Panels")]
         [SerializeField] private GameObject gameOverPanel;
-        [SerializeField] private GameObject victoryPanel;
+        [SerializeField] private LevelSummaryController levelSummaryController;
 
         private ExerciseUIController _uiController;
 
@@ -43,13 +43,13 @@ namespace UI.Exercises
         }
 
         /// <summary>
-        /// Shows the victory panel.
+        /// Shows the level summary screen.
         /// </summary>
-        public void ShowVictoryPanel()
+        public void ShowLevelSummary()
         {
-            if (victoryPanel != null)
+            if (levelSummaryController != null)
             {
-                victoryPanel.SetActive(true);
+                levelSummaryController.gameObject.SetActive(true);
             }
         }
 
@@ -59,7 +59,7 @@ namespace UI.Exercises
         public void ResetToExerciseView()
         {
             if (gameOverPanel != null) gameOverPanel.SetActive(false);
-            if (victoryPanel != null) victoryPanel.SetActive(false);
+            if (levelSummaryController != null) levelSummaryController.Hide();
         }
     }
 }
