@@ -175,6 +175,46 @@
 					"category": 0
 				}
 			]
+		},
+		{
+			"levelId": 4,
+			"theme": "Mobilité Durable",
+			"exercises": [
+				{
+					"exerciseType": "quiz",
+					"questionText": "Quel mode de transport émet le moins de CO2 par km ?",
+					"options": ["Le vélo", "La voiture électrique", "Le bus"],
+					"correctOptionIndex": 0,
+					"explanation": "Le vélo n'émet aucun CO2 direct et très peu à la fabrication comparé aux autres modes.",
+					"difficulty": 0,
+					"category": 1
+				},
+				{
+					"exerciseType": "trueFalse",
+					"statement": "Le covoiturage divise par deux l'empreinte carbone d'un trajet en voiture.",
+					"isTrue": true,
+					"explanation": "En partageant un trajet à deux, chaque passager divise effectivement l'empreinte par deux.",
+					"difficulty": 0,
+					"category": 1
+				},
+				{
+					"exerciseType": "sorting",
+					"instruction": "Classez ces modes de transport par impact écologique",
+					"categories": [
+						{ "categoryName": "Faible impact", "categoryColor": "#4CAF50" },
+						{ "categoryName": "Fort impact", "categoryColor": "#F44336" }
+					],
+					"items": [
+						{ "itemName": "Marche à pied", "correctCategoryIndex": 0 },
+						{ "itemName": "Avion court-courrier", "correctCategoryIndex": 1 },
+						{ "itemName": "Tramway", "correctCategoryIndex": 0 },
+						{ "itemName": "SUV diesel", "correctCategoryIndex": 1 }
+					],
+					"explanation": "Les transports en commun et la mobilité douce ont un impact bien moindre que les véhicules individuels thermiques.",
+					"difficulty": 1,
+					"category": 1
+				}
+			]
 		}
 	]
 }

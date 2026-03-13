@@ -87,39 +87,61 @@ namespace Managers
 
         /// <summary>
         /// Shows the Game Over panel with retry and menu options.
+        /// Auto-discovers buttons by name if not assigned in the Inspector.
         /// </summary>
         public void ShowGameOverScreen()
         {
-            Debug.Log("Displaying Game Over screen");
+            Debug.Log("[UIManager] Displaying Game Over screen");
 
-            // Hide quiz panel
             if (quizPanel != null)
             {
                 quizPanel.SetActive(false);
             }
 
-            // Show game over panel
-            if (gameOverPanel != null)
+            if (gameOverPanel == null)
             {
-                gameOverPanel.SetActive(true);
+                Debug.LogWarning("[UIManager] GameOverPanel is not assigned!");
+                return;
+            }
 
-                // Wire up buttons
-                if (gameOverRetryButton != null)
-                {
-                    gameOverRetryButton.onClick.RemoveAllListeners();
-                    gameOverRetryButton.onClick.AddListener(() => GameManager.Instance.RestartCurrentLevel());
-                }
+            gameOverPanel.SetActive(true);
 
-                if (gameOverMenuButton != null)
-                {
-                    gameOverMenuButton.onClick.RemoveAllListeners();
-                    gameOverMenuButton.onClick.AddListener(() => GameManager.Instance.ReturnToMenu());
-                }
+            // Auto-discover buttons if not assigned in Inspector
+            if (gameOverRetryButton == null)
+                gameOverRetryButton = FindButtonInPanel(gameOverPanel, "RetryButton");
+            if (gameOverMenuButton == null)
+                gameOverMenuButton = FindButtonInPanel(gameOverPanel, "MenuButton");
+
+            if (gameOverRetryButton != null)
+            {
+                gameOverRetryButton.onClick.RemoveAllListeners();
+                gameOverRetryButton.onClick.AddListener(() => GameManager.Instance.RestartCurrentLevel());
             }
             else
             {
-                Debug.LogWarning("GameOverPanel is not assigned in UIManager!");
+                Debug.LogWarning("[UIManager] GameOver RetryButton not found!");
             }
+
+            if (gameOverMenuButton != null)
+            {
+                gameOverMenuButton.onClick.RemoveAllListeners();
+                gameOverMenuButton.onClick.AddListener(() => GameManager.Instance.ReturnToMenu());
+            }
+            else
+            {
+                Debug.LogWarning("[UIManager] GameOver MenuButton not found!");
+            }
+        }
+
+        /// <summary>
+        /// Finds a Button component in a panel by GameObject name.
+        /// </summary>
+        private Button FindButtonInPanel(GameObject panel, string buttonName)
+        {
+            Transform found = panel.transform.Find(buttonName);
+            if (found != null)
+                return found.GetComponent<Button>();
+            return null;
         }
 
         /// <summary>

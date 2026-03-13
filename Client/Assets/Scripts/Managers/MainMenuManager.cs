@@ -27,6 +27,14 @@ namespace Managers
         [Tooltip("API endpoint URL. Use 'local://level/' for mock data from Resources/Data/levels_data.json")]
         [SerializeField] private string apiBaseUrl = "local://level/";
 
+        private void OnEnable()
+        {
+            if (GameManager.Instance != null)
+            {
+                RefreshLevelButtons();
+            }
+        }
+
         /// <summary>
         /// Initializes the level selection UI based on player progression.
         /// </summary>
