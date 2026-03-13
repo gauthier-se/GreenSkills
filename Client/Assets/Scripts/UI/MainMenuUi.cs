@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Managers;
 using TMPro;
 using UnityEngine;
@@ -7,18 +8,17 @@ namespace UI
 {
     /// <summary>
     /// Main menu UI controller.
-    /// Handles button clicks, level selection, and gamification stat display.
+    /// Handles dynamic level button spawning, gamification stat display, and navigation buttons.
     /// </summary>
     public class MainMenuUI : MonoBehaviour
     {
+        [Header("Level Selection")]
+        [SerializeField] private LevelButton levelButtonPrefab;
+        [SerializeField] private Transform levelButtonsContainer;
+
         [Header("Buttons")]
-        [SerializeField] private Button playButton;
         [SerializeField] private Button settingsButton;
         [SerializeField] private Button quitButton;
-
-        [Header("Level Selection")]
-        [SerializeField] private int startingLevel = 1;
-        [SerializeField] private bool autoSelectHighestLevel = false;
 
         [Header("Gamification Display")]
         [SerializeField] private TextMeshProUGUI playerLevelText;
@@ -27,28 +27,77 @@ namespace UI
         [SerializeField] private TextMeshProUGUI coinCountText;
         [SerializeField] private TextMeshProUGUI streakText;
 
+        private readonly List<LevelButton> _spawnedButtons = new List<LevelButton>();
+
         private void Start()
         {
             SetupButtons();
+            SpawnLevelButtons();
             RefreshGamificationDisplay();
         }
 
         private void OnEnable()
         {
-            // Refresh stats every time the menu becomes visible (e.g. returning from a level)
             RefreshGamificationDisplay();
+            RefreshLevelButtons();
         }
 
         private void SetupButtons()
         {
-            if (playButton != null)
-                playButton.onClick.AddListener(OnPlayClick);
-
             if (settingsButton != null)
                 settingsButton.onClick.AddListener(OnSettingsClick);
 
             if (quitButton != null)
                 quitButton.onClick.AddListener(OnQuitClick);
+        }
+
+        /// <summary>
+        /// Dynamically spawns level buttons based on the available level count.
+        /// </summary>
+        private void SpawnLevelButtons()
+        {
+            if (levelButtonPrefab == null || levelButtonsContainer == null) return;
+            if (ExerciseManager.Instance == null) return;
+
+            ClearSpawnedButtons();
+
+            int levelCount = ExerciseManager.Instance.GetLevelCount();
+
+            for (int i = 0; i < levelCount; i++)
+            {
+                int levelId = i + 1;
+                LevelButton instance = Instantiate(levelButtonPrefab, levelButtonsContainer);
+                bool unlocked = GameManager.Instance != null
+                    && GameManager.Instance.IsLevelUnlocked(levelId);
+                instance.Initialize(levelId, unlocked, LoadLevel);
+                _spawnedButtons.Add(instance);
+            }
+        }
+
+        /// <summary>
+        /// Refreshes all spawned level buttons with current unlock state and stars.
+        /// </summary>
+        private void RefreshLevelButtons()
+        {
+            for (int i = 0; i < _spawnedButtons.Count; i++)
+            {
+                if (_spawnedButtons[i] == null) continue;
+
+                int levelId = i + 1;
+                bool unlocked = GameManager.Instance != null
+                    && GameManager.Instance.IsLevelUnlocked(levelId);
+
+                _spawnedButtons[i].Initialize(levelId, unlocked, LoadLevel);
+            }
+        }
+
+        private void ClearSpawnedButtons()
+        {
+            foreach (var btn in _spawnedButtons)
+            {
+                if (btn != null) Destroy(btn.gameObject);
+            }
+            _spawnedButtons.Clear();
         }
 
         #region Gamification Display
@@ -95,30 +144,6 @@ namespace UI
         #endregion
 
         /// <summary>
-        /// Called when the Play button is clicked.
-        /// </summary>
-        public void OnPlayClick()
-        {
-            int levelToLoad = startingLevel;
-
-            if (autoSelectHighestLevel && GameManager.Instance != null)
-            {
-                levelToLoad = GameManager.Instance.GetHighestLevelUnlocked();
-            }
-
-            Debug.Log($"[MainMenuUI] Loading level {levelToLoad}");
-
-            if (GameManager.Instance != null)
-            {
-                GameManager.Instance.LoadLevel($"local://level/{levelToLoad}");
-            }
-            else
-            {
-                Debug.LogError("[MainMenuUI] GameManager.Instance is null!");
-            }
-        }
-
-        /// <summary>
         /// Called when the Settings button is clicked.
         /// </summary>
         public void OnSettingsClick()
@@ -142,7 +167,7 @@ namespace UI
         }
 
         /// <summary>
-        /// Loads a specific level (for level selection UI).
+        /// Loads a specific level by ID.
         /// </summary>
         public void LoadLevel(int levelId)
         {

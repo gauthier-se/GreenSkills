@@ -35,20 +35,19 @@ namespace UI.Exercises
         private List<string> _selectedAnswers = new List<string>();
         private int _currentBlankIndex = 0;
 
-        private void Awake()
-        {
-            if (validateButton != null)
-            {
-                validateButton.onClick.RemoveAllListeners();
-                validateButton.onClick.AddListener(OnValidateClicked);
-            }
-        }
-
         /// <summary>
         /// Initializes the controller with Fill in Blank exercise data.
         /// </summary>
         public override void Initialize(BaseExerciseData exerciseData)
         {
+            // Ensure validate button listener is set up
+            // (done here instead of Awake to handle panels that start inactive)
+            if (validateButton != null)
+            {
+                validateButton.onClick.RemoveAllListeners();
+                validateButton.onClick.AddListener(OnValidateClicked);
+            }
+
             base.Initialize(exerciseData);
 
             _exerciseData = exerciseData as FillInBlankExerciseData;
@@ -215,7 +214,8 @@ namespace UI.Exercises
             if (validateButton == null) return;
 
             // Enable validate only when all blanks are filled
-            bool allFilled = !_selectedAnswers.Contains(null) &&
+            bool allFilled = _selectedAnswers.Count > 0 &&
+                           !_selectedAnswers.Contains(null) &&
                            !_selectedAnswers.Exists(s => string.IsNullOrEmpty(s));
 
             validateButton.interactable = allFilled && isInteractable;

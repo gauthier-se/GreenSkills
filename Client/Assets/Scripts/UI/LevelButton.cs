@@ -19,6 +19,13 @@ namespace UI
         [Header("Visual States")]
         [SerializeField] private Color unlockedColor = Color.white;
         [SerializeField] private Color lockedColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+
+        [Header("Stars")]
+        [SerializeField] private Image star1;
+        [SerializeField] private Image star2;
+        [SerializeField] private Image star3;
+        [SerializeField] private Color starEarnedColor = new Color(1f, 0.84f, 0f);
+        [SerializeField] private Color starEmptyColor = new Color(0.4f, 0.4f, 0.4f, 0.5f);
         
         private int _levelId;
         private bool _isUnlocked;
@@ -74,6 +81,11 @@ namespace UI
             {
                 backgroundImage.color = unlocked ? unlockedColor : lockedColor;
             }
+
+            if (unlocked)
+                ShowStars(Managers.LevelScoreManager.GetLevelStars(id));
+            else
+                HideStars();
         }
 
         /// <summary>
@@ -98,16 +110,35 @@ namespace UI
             {
                 backgroundImage.color = unlocked ? unlockedColor : lockedColor;
             }
+
+            if (unlocked)
+                ShowStars(Managers.LevelScoreManager.GetLevelStars(_levelId));
+            else
+                HideStars();
         }
 
         /// <summary>
-        /// Displays a star rating for completed levels (future feature).
+        /// Displays a star rating for completed levels.
         /// </summary>
         /// <param name="stars">Number of stars earned (0-3).</param>
         public void ShowStars(int stars)
         {
-            // TODO: Implement star display system
-            // For example: activate star GameObjects based on the count
+            Image[] starImages = { star1, star2, star3 };
+            for (int i = 0; i < starImages.Length; i++)
+            {
+                if (starImages[i] == null) continue;
+                starImages[i].gameObject.SetActive(true);
+                starImages[i].color = i < stars ? starEarnedColor : starEmptyColor;
+            }
+        }
+
+        private void HideStars()
+        {
+            Image[] starImages = { star1, star2, star3 };
+            foreach (var img in starImages)
+            {
+                if (img != null) img.gameObject.SetActive(false);
+            }
         }
 
         /// <summary>

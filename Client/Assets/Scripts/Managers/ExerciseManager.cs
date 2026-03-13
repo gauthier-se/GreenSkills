@@ -35,6 +35,8 @@ namespace Managers
         [Header("Debug Settings")]
         [SerializeField] private bool enableDebugLogs = true;
 
+        private int _cachedLevelCount = -1;
+
         public void Awake()
         {
             if (Instance == null)
@@ -54,6 +56,28 @@ namespace Managers
             {
                 Destroy(gameObject);
             }
+        }
+
+        /// <summary>
+        /// Returns the total number of available levels from the local JSON data.
+        /// Result is cached after the first call.
+        /// </summary>
+        public int GetLevelCount()
+        {
+            if (_cachedLevelCount >= 0)
+                return _cachedLevelCount;
+
+            TextAsset jsonFile = Resources.Load<TextAsset>("Data/levels_data");
+            if (jsonFile == null)
+            {
+                LogError("File 'Data/levels_data' not found in Resources!");
+                return 0;
+            }
+
+            var allLevels = JsonUtility.FromJson<AllLevelsWithExercisesDto>(jsonFile.text);
+            _cachedLevelCount = allLevels?.levels?.Length ?? 0;
+            Log($"Level count loaded: {_cachedLevelCount}");
+            return _cachedLevelCount;
         }
 
         /// <summary>
