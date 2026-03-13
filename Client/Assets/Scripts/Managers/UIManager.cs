@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,18 +28,8 @@ namespace Managers
         [SerializeField] private Button gameOverRetryButton;
         [SerializeField] private Button gameOverMenuButton;
 
-        [Header("Victory Panel")]
-        [SerializeField] private GameObject victoryPanel;
-        [SerializeField] private TextMeshProUGUI victoryScoreText;
-        [SerializeField] private Button victoryNextLevelButton;
-        [SerializeField] private Button victoryMenuButton;
-        [SerializeField] private List<GameObject> victoryStars;
-
-        [Header("Victory Panel - Gamification")]
-        [SerializeField] private TextMeshProUGUI victoryXPText;
-        [SerializeField] private TextMeshProUGUI victoryCoinsText;
-        [SerializeField] private GameObject victoryLevelUpBadge;
-        [SerializeField] private TextMeshProUGUI victoryLevelUpText;
+        [Header("Level Summary")]
+        [SerializeField] private LevelSummaryController levelSummaryController;
 
         [Header("Quiz Panel (to hide on game end)")]
         [SerializeField] private GameObject quizPanel;
@@ -132,7 +123,8 @@ namespace Managers
         }
 
         /// <summary>
-        /// Shows the Victory panel with score, stars, gamification rewards, and navigation options.
+        /// Shows the level summary screen with animated star reveal,
+        /// score count-up, gamification rewards, and navigation options.
         /// </summary>
         /// <param name="score">The player's score for this level.</param>
         /// <param name="starsEarned">Number of stars earned (1-3).</param>
@@ -140,7 +132,7 @@ namespace Managers
         /// <param name="rewards">Gamification rewards earned from this level.</param>
         public void ShowVictoryScreen(int score, int starsEarned, bool hasNextLevel, LevelRewards rewards = default)
         {
-            Debug.Log($"Displaying Victory screen - Score: {score}, Stars: {starsEarned}");
+            Debug.Log($"[UIManager] Displaying level summary — Score: {score}, Stars: {starsEarned}");
 
             // Hide quiz panel
             if (quizPanel != null)
@@ -148,67 +140,13 @@ namespace Managers
                 quizPanel.SetActive(false);
             }
 
-            // Show victory panel
-            if (victoryPanel != null)
+            if (levelSummaryController != null)
             {
-                victoryPanel.SetActive(true);
-
-                // Update score text
-                if (victoryScoreText != null)
-                {
-                    victoryScoreText.text = $"Score: {score}";
-                }
-
-                // Update stars display
-                if (victoryStars != null)
-                {
-                    for (int i = 0; i < victoryStars.Count; i++)
-                    {
-                        if (victoryStars[i] != null)
-                        {
-                            victoryStars[i].SetActive(i < starsEarned);
-                        }
-                    }
-                }
-
-                // Update gamification reward displays
-                if (victoryXPText != null)
-                {
-                    victoryXPText.text = $"+{rewards.xpEarned} XP";
-                }
-
-                if (victoryCoinsText != null)
-                {
-                    victoryCoinsText.text = $"+{rewards.coinsEarned}";
-                }
-
-                if (victoryLevelUpBadge != null)
-                {
-                    victoryLevelUpBadge.SetActive(rewards.didLevelUp);
-                }
-
-                if (victoryLevelUpText != null && rewards.didLevelUp)
-                {
-                    victoryLevelUpText.text = $"Niveau {rewards.newPlayerLevel} !";
-                }
-
-                // Wire up buttons
-                if (victoryNextLevelButton != null)
-                {
-                    victoryNextLevelButton.gameObject.SetActive(hasNextLevel);
-                    victoryNextLevelButton.onClick.RemoveAllListeners();
-                    victoryNextLevelButton.onClick.AddListener(() => GameManager.Instance.LoadNextLevel());
-                }
-
-                if (victoryMenuButton != null)
-                {
-                    victoryMenuButton.onClick.RemoveAllListeners();
-                    victoryMenuButton.onClick.AddListener(() => GameManager.Instance.ReturnToMenu());
-                }
+                levelSummaryController.Show(score, starsEarned, hasNextLevel, rewards);
             }
             else
             {
-                Debug.LogWarning("VictoryPanel is not assigned in UIManager!");
+                Debug.LogWarning("[UIManager] LevelSummaryController is not assigned!");
             }
         }
 
@@ -219,7 +157,7 @@ namespace Managers
         public void ResetToQuizView()
         {
             if (gameOverPanel != null) gameOverPanel.SetActive(false);
-            if (victoryPanel != null) victoryPanel.SetActive(false);
+            if (levelSummaryController != null) levelSummaryController.Hide();
             if (quizPanel != null) quizPanel.SetActive(true);
         }
 
