@@ -1,4 +1,5 @@
 using UnityEngine;
+using UI;
 
 namespace Managers
 {
@@ -14,8 +15,9 @@ namespace Managers
         [SerializeField] private string loginSceneName = "Login";
 
         [Header("Optional: Splash Screen")]
-        [SerializeField] private float splashDuration = 1f;
-        [SerializeField] private bool showSplash = false;
+        [SerializeField] private float splashDuration = 4.5f;
+        [SerializeField] private bool showSplash = true;
+        [SerializeField] private BootSplashUI splashUI;
 
         [Header("Debug")]
         [SerializeField] private bool logInitialization = true;
@@ -27,10 +29,15 @@ namespace Managers
 
             VerifyManagers();
 
-            if (showSplash)
+            if (showSplash && splashUI != null)
+            {
+                splashUI.gameObject.SetActive(true);
                 StartCoroutine(WaitAndLoadNextScene());
+            }
             else
+            {
                 LoadNextScene();
+            }
         }
 
         private void VerifyManagers()
