@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Data;
 using UnityEngine;
 
 namespace Managers
@@ -17,6 +19,10 @@ namespace Managers
         [Tooltip("AudioSource used for sound effects playback")]
         [SerializeField] private AudioSource sfxSource;
 
+        [Header("Sound Library")]
+        [Tooltip("ScriptableObject containing all sound entries")]
+        [SerializeField] private AudioLibraryData audioLibrary;
+
         private const string KEY_MUSIC_VOLUME = "Audio_MusicVolume";
         private const string KEY_SFX_VOLUME = "Audio_SfxVolume";
         private const string KEY_MUTED = "Audio_Muted";
@@ -24,6 +30,8 @@ namespace Managers
         private float _musicVolume = 1f;
         private float _sfxVolume = 1f;
         private bool _isMuted;
+
+        private Dictionary<string, SoundEntry> _soundLookup;
 
         /// <summary>Current music volume (0 to 1).</summary>
         public float MusicVolume => _musicVolume;
@@ -48,6 +56,7 @@ namespace Managers
 
                 DontDestroyOnLoad(gameObject);
                 LoadSettingsFromPrefs();
+                BuildSoundLookup();
             }
             else
             {
@@ -86,13 +95,92 @@ namespace Managers
         }
 
         /// <summary>
-        /// Plays a sound effect by name.
+        /// Plays a sound by name, routing to SFX or music based on the sound entry configuration.
         /// </summary>
         /// <param name="soundName">The name of the sound to play.</param>
         public void PlaySound(string soundName)
         {
-            Debug.Log($"[AudioManager] Playing sound: {soundName}");
-            // TODO: Implement actual audio playback using AudioSource
+            if (_soundLookup == null)
+            {
+                Debug.LogWarning($"[AudioManager] Sound lookup not initialized. Cannot play \"{soundName}\".");
+                return;
+            }
+
+            if (!_soundLookup.TryGetValue(soundName, out SoundEntry entry))
+            {
+                Debug.LogWarning($"[AudioManager] Sound \"{soundName}\" not found in audio library.");
+                return;
+            }
+
+            if (entry.clip == null)
+            {
+                Debug.LogWarning($"[AudioManager] No clip assigned for sound \"{soundName}\".");
+                return;
+            }
+
+            if (entry.isMusic)
+                PlayMusic(entry.clip);
+            else
+                PlaySFX(entry.clip);
+        }
+
+        /// <summary>
+        /// Plays an audio clip as a one-shot sound effect.
+        /// </summary>
+        public void PlaySFX(AudioClip clip)
+        {
+            if (sfxSource == null || clip == null) return;
+            sfxSource.PlayOneShot(clip);
+        }
+
+        /// <summary>
+        /// Plays an audio clip as looping background music. Skips if the same clip is already playing.
+        /// </summary>
+        public void PlayMusic(AudioClip clip)
+        {
+            if (musicSource == null || clip == null) return;
+            if (musicSource.clip == clip && musicSource.isPlaying) return;
+
+            musicSource.clip = clip;
+            musicSource.loop = true;
+            musicSource.Play();
+        }
+
+        /// <summary>
+        /// Stops the currently playing music and clears the clip.
+        /// </summary>
+        public void StopMusic()
+        {
+            if (musicSource == null) return;
+            musicSource.Stop();
+            musicSource.clip = null;
+        }
+
+        private void BuildSoundLookup()
+        {
+            _soundLookup = new Dictionary<string, SoundEntry>();
+
+            if (audioLibrary == null)
+            {
+                Debug.LogWarning("[AudioManager] No AudioLibrary assigned. PlaySound will not work.");
+                return;
+            }
+
+            foreach (SoundEntry entry in audioLibrary.sounds)
+            {
+                if (string.IsNullOrEmpty(entry.name))
+                {
+                    Debug.LogWarning("[AudioManager] Sound entry with empty name found in audio library. Skipping.");
+                    continue;
+                }
+
+                if (!_soundLookup.TryAdd(entry.name, entry))
+                {
+                    Debug.LogWarning($"[AudioManager] Duplicate sound name \"{entry.name}\" in audio library. Keeping first entry.");
+                }
+            }
+
+            Debug.Log($"[AudioManager] Sound lookup built with {_soundLookup.Count} entries.");
         }
 
         private void ApplyVolumes()

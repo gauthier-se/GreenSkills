@@ -399,6 +399,8 @@ namespace Managers
         {
             Debug.Log("[GameManager] Returning to main menu...");
 
+            if (audioManager != null) audioManager.StopMusic();
+
             // Unsubscribe from events
             if (_exerciseUIController != null)
             {
@@ -437,6 +439,8 @@ namespace Managers
         {
             Debug.Log($"[GameManager] Restarting level {_currentLevelId}...");
 
+            if (audioManager != null) audioManager.StopMusic();
+
             _currentExerciseIndex = 0;
             _currentLives = maxLives;
 
@@ -455,6 +459,8 @@ namespace Managers
         /// </summary>
         public void LoadNextLevel()
         {
+            if (audioManager != null) audioManager.StopMusic();
+
             int nextLevelId = _currentLevelId + 1;
             Debug.Log($"[GameManager] Loading level {nextLevelId}...");
 
