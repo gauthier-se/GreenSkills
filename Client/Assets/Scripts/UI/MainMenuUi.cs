@@ -20,6 +20,9 @@ namespace UI
         [SerializeField] private Button settingsButton;
         [SerializeField] private Button quitButton;
 
+        [Header("Settings")]
+        [SerializeField] private SettingsPanelController settingsPanel;
+
         [Header("Gamification Display")]
         [SerializeField] private TextMeshProUGUI playerLevelText;
         [SerializeField] private Slider xpProgressBar;
@@ -149,7 +152,11 @@ namespace UI
         public void OnSettingsClick()
         {
             Debug.Log("[MainMenuUI] Settings clicked");
-            // TODO: Implement settings panel
+
+            if (settingsPanel != null)
+            {
+                settingsPanel.Show();
+            }
         }
 
         /// <summary>
