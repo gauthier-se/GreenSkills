@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Data;
 using Managers;
 
 namespace UI
@@ -52,6 +53,34 @@ namespace UI
         [Tooltip("Duration of the fade-in/out animation in seconds")]
         [SerializeField] private float fadeDuration = 0.3f;
 
+        [Header("Theme")]
+        [SerializeField] private UITheme theme;
+
+        [Header("Theme — Overlay & Panel")]
+        [SerializeField] private Image overlayBackground;
+        [SerializeField] private Image panelBackground;
+        [SerializeField] private Image panelHeaderBar;
+        [SerializeField] private RectTransform panelTransform;
+
+        [Header("Theme — Slider Styling")]
+        [SerializeField] private Image musicSliderFill;
+        [SerializeField] private Image musicSliderHandle;
+        [SerializeField] private Image musicSliderBackground;
+        [SerializeField] private Image sfxSliderFill;
+        [SerializeField] private Image sfxSliderHandle;
+        [SerializeField] private Image sfxSliderBackground;
+
+        [Header("Theme — Toggle Styling")]
+        [SerializeField] private Image muteCheckmark;
+        [SerializeField] private Image muteToggleBackground;
+
+        [Header("Theme — Text Elements")]
+        [SerializeField] private TMP_Text panelTitleText;
+        [SerializeField] private TMP_Text musicLabel;
+        [SerializeField] private TMP_Text sfxLabel;
+        [SerializeField] private TMP_Text muteLabel;
+        [SerializeField] private TMP_Text accountSectionTitle;
+
         /// <summary>
         /// Event fired when the settings panel is dismissed.
         /// </summary>
@@ -86,6 +115,7 @@ namespace UI
                 muteToggle.onValueChanged.AddListener(OnMuteToggleChanged);
             }
 
+            ApplyTheme();
             HideImmediate();
         }
 
@@ -225,6 +255,117 @@ namespace UI
 
         #endregion
 
+        #region Theme
+
+        /// <summary>
+        /// Applies theme colors to all panel elements.
+        /// </summary>
+        private void ApplyTheme()
+        {
+            if (theme == null) return;
+
+            // Overlay — dark scrim
+            if (overlayBackground != null)
+                overlayBackground.color = new Color(
+                    theme.bgDark.r, theme.bgDark.g, theme.bgDark.b, 0.6f);
+
+            // Panel card
+            if (panelBackground != null)
+                panelBackground.color = theme.bgDarkSurface;
+
+            // Header accent bar
+            if (panelHeaderBar != null)
+                panelHeaderBar.color = new Color(
+                    theme.primary.r, theme.primary.g, theme.primary.b, 0.3f);
+
+            // Title
+            if (panelTitleText != null)
+                panelTitleText.color = theme.textOnDark;
+
+            // Labels
+            if (musicLabel != null)
+                musicLabel.color = theme.textOnDarkMuted;
+
+            if (sfxLabel != null)
+                sfxLabel.color = theme.textOnDarkMuted;
+
+            if (muteLabel != null)
+                muteLabel.color = theme.textOnDarkMuted;
+
+            // Slider fills — brand green
+            if (musicSliderFill != null)
+                musicSliderFill.color = theme.primaryLight;
+
+            if (sfxSliderFill != null)
+                sfxSliderFill.color = theme.primaryLight;
+
+            // Slider handles — white
+            if (musicSliderHandle != null)
+                musicSliderHandle.color = theme.textOnDark;
+
+            if (sfxSliderHandle != null)
+                sfxSliderHandle.color = theme.textOnDark;
+
+            // Slider backgrounds — subtle track
+            Color sliderTrack = new Color(
+                theme.neutral500.r, theme.neutral500.g, theme.neutral500.b, 0.4f);
+
+            if (musicSliderBackground != null)
+                musicSliderBackground.color = sliderTrack;
+
+            if (sfxSliderBackground != null)
+                sfxSliderBackground.color = sliderTrack;
+
+            // Mute toggle
+            if (muteCheckmark != null)
+                muteCheckmark.color = theme.primaryLight;
+
+            if (muteToggleBackground != null)
+                muteToggleBackground.color = new Color(
+                    theme.neutral500.r, theme.neutral500.g, theme.neutral500.b, 0.5f);
+
+            // Account section
+            if (accountSectionTitle != null)
+                accountSectionTitle.color = theme.textOnDark;
+
+            if (usernameText != null)
+                usernameText.color = theme.textOnDark;
+
+            if (emailText != null)
+                emailText.color = theme.textOnDarkMuted;
+
+            // Logout button — red
+            if (logoutButton != null)
+            {
+                var colors = logoutButton.colors;
+                colors.normalColor = theme.error;
+                colors.highlightedColor = theme.error;
+                colors.pressedColor = new Color(
+                    theme.error.r * 0.8f, theme.error.g * 0.8f, theme.error.b * 0.8f, 1f);
+                colors.disabledColor = theme.neutral300;
+                logoutButton.colors = colors;
+            }
+
+            // Close button — subtle
+            if (closeButton != null)
+            {
+                var colors = closeButton.colors;
+                colors.normalColor = new Color(
+                    theme.textOnDarkMuted.r, theme.textOnDarkMuted.g, theme.textOnDarkMuted.b, 0.5f);
+                colors.highlightedColor = theme.textOnDarkMuted;
+                colors.pressedColor = theme.textOnDarkMuted;
+                colors.disabledColor = theme.neutral300;
+                closeButton.colors = colors;
+            }
+
+            // Version text — very subtle
+            if (versionText != null)
+                versionText.color = new Color(
+                    theme.textOnDarkMuted.r, theme.textOnDarkMuted.g, theme.textOnDarkMuted.b, 0.35f);
+        }
+
+        #endregion
+
         #region Animation
 
         private void FadeIn()
@@ -258,7 +399,14 @@ namespace UI
                 yield break;
             }
 
+            bool isFadingIn = to > from;
+            float scaleFrom = isFadingIn ? 0.95f : 1f;
+            float scaleTo = isFadingIn ? 1f : 0.95f;
+
             canvasGroup.alpha = from;
+            if (panelTransform != null)
+                panelTransform.localScale = Vector3.one * scaleFrom;
+
             float elapsed = 0f;
 
             while (elapsed < duration)
@@ -266,10 +414,16 @@ namespace UI
                 elapsed += Time.deltaTime;
                 float t = Mathf.Clamp01(elapsed / duration);
                 canvasGroup.alpha = Mathf.Lerp(from, to, t);
+
+                if (panelTransform != null)
+                    panelTransform.localScale = Vector3.one * Mathf.Lerp(scaleFrom, scaleTo, t);
+
                 yield return null;
             }
 
             canvasGroup.alpha = to;
+            if (panelTransform != null)
+                panelTransform.localScale = Vector3.one * scaleTo;
         }
 
         private void HideImmediate()
