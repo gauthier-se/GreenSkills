@@ -213,5 +213,23 @@ namespace Managers
             PlayerPrefs.SetInt(KEY_MUTED, _isMuted ? 1 : 0);
             PlayerPrefs.Save();
         }
+
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            if (musicSource == null) return;
+            if (pauseStatus)
+                musicSource.Pause();
+            else
+                musicSource.UnPause();
+        }
+
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            if (musicSource == null) return;
+            if (!hasFocus)
+                musicSource.Pause();
+            else
+                musicSource.UnPause();
+        }
     }
 }
