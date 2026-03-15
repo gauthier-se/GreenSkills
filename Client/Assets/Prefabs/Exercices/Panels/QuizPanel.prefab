@@ -92,8 +92,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UI.Exercises.QuizController
   panelRoot: {fileID: 1340196779355728676}
   canvasGroup: {fileID: 0}
-  questionText: {fileID: 3268164119134486283}
-  questionImage: {fileID: 0}
   answerButtons:
   - {fileID: 5427076881261538955}
   - {fileID: 3947664547599172859}
@@ -104,9 +102,7 @@ MonoBehaviour:
   - {fileID: 8020638528663526705}
   - {fileID: 8352957231087452010}
   - {fileID: 6671093779267195078}
-  correctColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
-  incorrectColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
-  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  theme: {fileID: 11400000, guid: dca6d602255b9473185e1ef8a9fb8037, type: 2}
 --- !u!1 &2735468752812175225
 GameObject:
   m_ObjectHideFlags: 0
@@ -331,6 +327,7 @@ GameObject:
   - component: {fileID: 3598479154858758982}
   - component: {fileID: 7579666701395797846}
   - component: {fileID: 8584766800149709162}
+  - component: {fileID: 4677337088647633692}
   m_Layer: 5
   m_Name: OptionButton2
   m_TagString: Untagged
@@ -440,6 +437,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4677337088647633692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3410998855228024196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &6036369161219811448
 GameObject:
   m_ObjectHideFlags: 0
@@ -1000,6 +1012,7 @@ GameObject:
   - component: {fileID: 3601330821477986660}
   - component: {fileID: 2407558579061528334}
   - component: {fileID: 8793862429694106173}
+  - component: {fileID: 5288585309273496838}
   m_Layer: 5
   m_Name: OptionButton3
   m_TagString: Untagged
@@ -1109,6 +1122,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5288585309273496838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7350212172236069669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &8001337503564391236
 GameObject:
   m_ObjectHideFlags: 0
@@ -1121,6 +1149,7 @@ GameObject:
   - component: {fileID: 7805536512888497559}
   - component: {fileID: 4985291497626155918}
   - component: {fileID: 5427076881261538955}
+  - component: {fileID: 1314539381614845298}
   m_Layer: 5
   m_Name: OptionButton0
   m_TagString: Untagged
@@ -1230,6 +1259,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1314539381614845298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8001337503564391236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &8500262859202748865
 GameObject:
   m_ObjectHideFlags: 0
@@ -1242,6 +1286,7 @@ GameObject:
   - component: {fileID: 1571564991009230489}
   - component: {fileID: 3316938276387470808}
   - component: {fileID: 3947664547599172859}
+  - component: {fileID: 4209805240712819921}
   m_Layer: 5
   m_Name: OptionButton1
   m_TagString: Untagged
@@ -1351,3 +1396,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4209805240712819921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8500262859202748865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
