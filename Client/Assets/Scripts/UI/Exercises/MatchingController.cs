@@ -13,7 +13,6 @@ namespace UI.Exercises
     public class MatchingController : BaseExerciseController
     {
         [Header("Matching UI Elements")]
-        [SerializeField] private TextMeshProUGUI instructionText;
         [SerializeField] private TextMeshProUGUI leftHeaderText;
         [SerializeField] private TextMeshProUGUI rightHeaderText;
         [SerializeField] private Transform leftColumnContainer;
@@ -83,11 +82,6 @@ namespace UI.Exercises
             _selectedItem = null;
 
             // Update headers
-            if (instructionText != null)
-            {
-                instructionText.text = _exerciseData.instruction;
-            }
-
             if (leftHeaderText != null)
             {
                 leftHeaderText.text = _exerciseData.leftColumnHeader;

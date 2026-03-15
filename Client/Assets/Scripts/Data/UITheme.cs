@@ -18,6 +18,7 @@ namespace Data
         public Color bgCard = HexColor("#ffffff");
         public Color bgDark = HexColor("#0a2e1c");
         public Color bgDarkSurface = HexColor("#132b1e");
+        public Color bgQuestionZone = HexColor("#0f3d24");
 
         [Header("Borders")]
         public Color borderDefault = HexColor("#d9e6da");

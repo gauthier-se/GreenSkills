@@ -12,7 +12,6 @@ namespace UI.Exercises
     public class TrueFalseController : BaseExerciseController
     {
         [Header("True/False UI Elements")]
-        [SerializeField] private TextMeshProUGUI statementText;
         [SerializeField] private Button trueButton;
         [SerializeField] private Button falseButton;
         [SerializeField] private TextMeshProUGUI trueButtonText;
@@ -72,12 +71,6 @@ namespace UI.Exercises
             {
                 Debug.LogError("TrueFalseController: Invalid exercise data type!");
                 return;
-            }
-
-            // Update UI
-            if (statementText != null)
-            {
-                statementText.text = _exerciseData.statement;
             }
 
             // Set button texts (can be customized)

@@ -28,6 +28,10 @@ namespace UI.Exercises
         [Tooltip("Reference to the Matching panel controller")]
         [SerializeField] private MatchingController matchingController;
 
+        [Header("Layout")]
+        [Tooltip("Reference to the shared question/answer zone layout")]
+        [SerializeField] private ExerciseLayoutController layoutController;
+
         [Header("Feedback")]
         [Tooltip("Reference to the explanation popup controller")]
         [SerializeField] private ExplanationPopupController explanationPopup;
@@ -127,6 +131,12 @@ namespace UI.Exercises
             _currentController = controller;
             _currentExercise = exercise;
 
+            // Setup shared layout
+            if (layoutController != null)
+            {
+                layoutController.SetupForExercise(exercise);
+            }
+
             // Initialize and show the controller
             controller.Initialize(exercise);
             controller.Show();
@@ -188,6 +198,7 @@ namespace UI.Exercises
         public void HideCurrentPanel()
         {
             _currentController?.Hide();
+            layoutController?.Clear();
             _currentController = null;
             _currentExercise = null;
         }
@@ -202,6 +213,7 @@ namespace UI.Exercises
                 controller?.Hide();
             }
 
+            layoutController?.Clear();
             _currentController = null;
             _currentExercise = null;
         }

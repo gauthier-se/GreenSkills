@@ -1015,6 +1015,7 @@ MonoBehaviour:
   incorrectSoundName: Incorrect
   gameOverMusicName: GameOverMusic
   victorySoundName: Victory
+  ambientMusicName: AmbientMusic
   maxLives: 3
   feedbackDelay: 2
 --- !u!82 &708438293
