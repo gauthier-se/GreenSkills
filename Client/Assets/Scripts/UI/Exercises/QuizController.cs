@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Data;
 using Data.Exercises;
 using TMPro;
 using UnityEngine;
@@ -16,10 +17,8 @@ namespace UI.Exercises
         [SerializeField] private List<Button> answerButtons;
         [SerializeField] private List<TextMeshProUGUI> answerButtonTexts;
 
-        [Header("Feedback Colors")]
-        [SerializeField] private Color correctColor = new Color(0.2f, 0.8f, 0.2f);
-        [SerializeField] private Color incorrectColor = new Color(0.8f, 0.2f, 0.2f);
-        [SerializeField] private Color defaultColor = Color.white;
+        [Header("Theme")]
+        [SerializeField] private UITheme theme;
 
         private List<Image> _answerButtonImages;
         private QuizExerciseData _exerciseData;
@@ -85,8 +84,8 @@ namespace UI.Exercises
             // Update answer buttons
             UpdateAnswerButtons();
 
-            // Reset colors
-            ResetButtonColors();
+            // Apply default theme styling
+            ApplyDefaultButtonStyle();
         }
 
         /// <summary>
@@ -158,26 +157,31 @@ namespace UI.Exercises
         /// </summary>
         public override void ShowFeedback(bool isCorrect, object correctAnswer = null)
         {
-            if (_exerciseData == null || _answerButtonImages == null) return;
+            if (_exerciseData == null || _answerButtonImages == null || theme == null) return;
 
             int correctIndex = _exerciseData.correctOptionIndex;
 
-            // Highlight correct answer in green
-            if (correctIndex >= 0 && correctIndex < _answerButtonImages.Count)
+            for (int i = 0; i < _answerButtonImages.Count; i++)
             {
-                if (_answerButtonImages[correctIndex] != null)
-                {
-                    _answerButtonImages[correctIndex].color = correctColor;
-                }
-            }
+                if (_answerButtonImages[i] == null) continue;
 
-            // If player was wrong, highlight their choice in red
-            if (!isCorrect && _selectedAnswerIndex >= 0 && _selectedAnswerIndex < _answerButtonImages.Count)
-            {
-                if (_answerButtonImages[_selectedAnswerIndex] != null)
+                if (i == correctIndex)
                 {
-                    _answerButtonImages[_selectedAnswerIndex].color = incorrectColor;
+                    _answerButtonImages[i].color = theme.success;
+                    SetButtonTextColor(i, theme.textOnDark);
                 }
+                else if (!isCorrect && i == _selectedAnswerIndex)
+                {
+                    _answerButtonImages[i].color = theme.error;
+                    SetButtonTextColor(i, theme.textOnDark);
+                }
+                else
+                {
+                    _answerButtonImages[i].color = theme.neutral50;
+                    SetButtonTextColor(i, theme.textMuted);
+                }
+
+                SetButtonOutlineColor(i, Color.clear);
             }
         }
 
@@ -187,23 +191,40 @@ namespace UI.Exercises
         public override void Reset()
         {
             _selectedAnswerIndex = -1;
-            ResetButtonColors();
+            ApplyDefaultButtonStyle();
             SetInteractable(true);
         }
 
         /// <summary>
-        /// Resets all button colors to default.
+        /// Applies the default theme styling to all buttons.
         /// </summary>
-        private void ResetButtonColors()
+        private void ApplyDefaultButtonStyle()
         {
-            if (_answerButtonImages == null) return;
-
-            foreach (var image in _answerButtonImages)
+            if (_answerButtonImages == null || theme == null)
             {
-                if (image != null)
-                {
-                    image.color = defaultColor;
-                }
+                if (theme == null)
+                    Debug.LogWarning("QuizController: UITheme is not assigned! Wire MainTheme in the Inspector.");
+                return;
+            }
+
+            for (int i = 0; i < _answerButtonImages.Count; i++)
+            {
+                if (_answerButtonImages[i] != null)
+                    _answerButtonImages[i].color = theme.bgCard;
+
+                SetButtonTextColor(i, theme.textPrimary);
+                SetButtonOutlineColor(i, theme.borderDefault);
+            }
+
+            foreach (var button in answerButtons)
+            {
+                if (button == null) continue;
+                var colors = button.colors;
+                colors.normalColor = theme.bgCard;
+                colors.highlightedColor = theme.bgSurface;
+                colors.pressedColor = theme.borderStrong;
+                colors.disabledColor = theme.neutral50;
+                button.colors = colors;
             }
         }
 
@@ -222,6 +243,21 @@ namespace UI.Exercises
                 {
                     button.interactable = interactable;
                 }
+            }
+        }
+
+        private void SetButtonTextColor(int index, Color color)
+        {
+            if (answerButtonTexts != null && index < answerButtonTexts.Count && answerButtonTexts[index] != null)
+                answerButtonTexts[index].color = color;
+        }
+
+        private void SetButtonOutlineColor(int index, Color color)
+        {
+            if (index < answerButtons.Count && answerButtons[index] != null)
+            {
+                var outline = answerButtons[index].GetComponent<Outline>();
+                if (outline != null) outline.effectColor = color;
             }
         }
     }
