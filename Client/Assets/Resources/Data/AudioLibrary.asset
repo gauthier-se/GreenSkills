@@ -26,5 +26,5 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 43279f28480ee48fa9d5262a591dee63, type: 3}
     isMusic: 1
   - name: AmbientMusic
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: a5b9e1a1a82a14416a6a43c9216a7efe, type: 3}
     isMusic: 1

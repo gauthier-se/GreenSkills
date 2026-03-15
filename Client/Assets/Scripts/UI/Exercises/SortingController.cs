@@ -14,7 +14,6 @@ namespace UI.Exercises
     public class SortingController : BaseExerciseController
     {
         [Header("Sorting UI Elements")]
-        [SerializeField] private TextMeshProUGUI instructionText;
         [SerializeField] private Transform itemsContainer;
         [SerializeField] private Transform categoriesContainer;
         [SerializeField] private Button validateButton;
@@ -58,12 +57,6 @@ namespace UI.Exercises
 
             // Reset state
             _itemPlacements.Clear();
-
-            // Update instruction
-            if (instructionText != null)
-            {
-                instructionText.text = _exerciseData.instruction;
-            }
 
             // Create drop zones for categories
             CreateDropZones();

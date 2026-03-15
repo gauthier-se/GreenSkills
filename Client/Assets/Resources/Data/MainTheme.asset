@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94b7428b3a21841fbb283e9efb23b4dd, type: 3}
+  m_Name: MainTheme
+  m_EditorClassIdentifier: Assembly-CSharp::Data.UITheme
+  primary: {r: 0.11372549, g: 0.47843137, b: 0.30980393, a: 1}
+  primaryLight: {r: 0.16470589, g: 0.65882355, b: 0.43137255, a: 1}
+  primaryDark: {r: 0.05882353, g: 0.32941177, b: 0.20784314, a: 1}
+  primarySubtle: {r: 0.89411765, g: 0.972549, b: 0.91764706, a: 1}
+  bgApp: {r: 0.9490196, g: 0.96862745, b: 0.95686275, a: 1}
+  bgSurface: {r: 0.89411765, g: 0.972549, b: 0.91764706, a: 1}
+  bgCard: {r: 1, g: 1, b: 1, a: 1}
+  bgDark: {r: 0.039215688, g: 0.18039216, b: 0.10980392, a: 1}
+  bgDarkSurface: {r: 0.07450981, g: 0.16862746, b: 0.11764706, a: 1}
+  bgQuestionZone: {r: 0.05882353, g: 0.23921569, b: 0.14117648, a: 1}
+  borderDefault: {r: 0.8509804, g: 0.9019608, b: 0.85490197, a: 1}
+  borderStrong: {r: 0.65882355, g: 0.8117647, b: 0.7372549, a: 1}
+  borderBrand: {r: 0.11372549, g: 0.47843137, b: 0.30980393, a: 1}
+  borderNeutral: {r: 0.8862745, g: 0.8862745, b: 0.85490197, a: 1}
+  itAzur: {r: 0.105882354, g: 0.43529412, b: 0.65882355, a: 1}
+  itAzurSubtle: {r: 0.92156863, g: 0.9529412, b: 0.972549, a: 1}
+  solaire: {r: 0.9098039, g: 0.63529414, b: 0.16862746, a: 1}
+  solaireSubtle: {r: 0.99215686, g: 0.9529412, b: 0.9019608, a: 1}
+  rseCyan: {r: 0.23921569, g: 0.54509807, b: 0.54509807, a: 1}
+  rseCyanSubtle: {r: 0.92156863, g: 0.9647059, b: 0.96862745, a: 1}
+  gouvViolet: {r: 0.60784316, g: 0.34901962, b: 0.7137255, a: 1}
+  gouvVioletSubtle: {r: 0.9647059, g: 0.93333334, b: 0.972549, a: 1}
+  success: {r: 0.16470589, g: 0.65882355, b: 0.43137255, a: 1}
+  successBg: {r: 0.92156863, g: 0.96862745, b: 0.9490196, a: 1}
+  warning: {r: 0.9098039, g: 0.63529414, b: 0.16862746, a: 1}
+  warningBg: {r: 0.99215686, g: 0.9529412, b: 0.9019608, a: 1}
+  error: {r: 0.8509804, g: 0.30980393, b: 0.23921569, a: 1}
+  errorBg: {r: 0.9882353, g: 0.93333334, b: 0.9254902, a: 1}
+  textPrimary: {r: 0.101960786, g: 0.101960786, b: 0.09411765, a: 1}
+  textSecondary: {r: 0.2901961, g: 0.34117648, b: 0.34509805, a: 1}
+  textMuted: {r: 0.47843137, g: 0.56078434, b: 0.5254902, a: 1}
+  textOnDark: {r: 1, g: 1, b: 1, a: 1}
+  textOnDarkMuted: {r: 0.79607844, g: 0.9019608, b: 0.83137256, a: 1}
+  neutral50: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+  neutral100: {r: 0.8862745, g: 0.8862745, b: 0.85490197, a: 1}
+  neutral300: {r: 0.6862745, g: 0.6862745, b: 0.67058825, a: 1}
+  neutral500: {r: 0.43137255, g: 0.45490196, b: 0.4392157, a: 1}
+  neutral900: {r: 0.17254902, g: 0.17254902, b: 0.16470589, a: 1}

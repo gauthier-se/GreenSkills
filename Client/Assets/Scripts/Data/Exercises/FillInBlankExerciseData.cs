@@ -78,11 +78,12 @@ namespace Data.Exercises
         }
 
         /// <summary>
-        /// Returns the sentence with blanks as the main text.
+        /// Returns a simple instruction for the shared question zone.
+        /// The interactive sentence with blanks remains in the answer zone controller.
         /// </summary>
         public override string GetMainText()
         {
-            return sentenceWithBlanks;
+            return "Complétez la phrase";
         }
 
         /// <summary>

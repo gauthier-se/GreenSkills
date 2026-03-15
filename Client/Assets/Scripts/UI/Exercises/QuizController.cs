@@ -13,8 +13,6 @@ namespace UI.Exercises
     public class QuizController : BaseExerciseController
     {
         [Header("Quiz UI Elements")]
-        [SerializeField] private TextMeshProUGUI questionText;
-        [SerializeField] private Image questionImage;
         [SerializeField] private List<Button> answerButtons;
         [SerializeField] private List<TextMeshProUGUI> answerButtonTexts;
 
@@ -82,26 +80,6 @@ namespace UI.Exercises
             {
                 Debug.LogError("QuizController: Invalid exercise data type!");
                 return;
-            }
-
-            // Update question text
-            if (questionText != null)
-            {
-                questionText.text = _exerciseData.questionText;
-            }
-
-            // Update question image
-            if (questionImage != null)
-            {
-                if (_exerciseData.image != null)
-                {
-                    questionImage.sprite = _exerciseData.image;
-                    questionImage.gameObject.SetActive(true);
-                }
-                else
-                {
-                    questionImage.gameObject.SetActive(false);
-                }
             }
 
             // Update answer buttons
