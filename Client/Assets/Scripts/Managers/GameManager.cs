@@ -32,6 +32,7 @@ namespace Managers
         [SerializeField] private string incorrectSoundName = "Incorrect";
         [SerializeField] private string gameOverMusicName = "GameOverMusic";
         [SerializeField] private string victorySoundName = "Victory";
+        [SerializeField] private string ambientMusicName = "AmbientMusic";
 
         [Header("Game Settings")]
         [SerializeField] private int maxLives = 3;
@@ -168,6 +169,11 @@ namespace Managers
             if (uiManager != null)
             {
                 uiManager.UpdateLivesUI(_currentLives);
+            }
+
+            if (audioManager != null)
+            {
+                audioManager.PlaySound(ambientMusicName);
             }
 
             DisplayCurrentExercise();
@@ -452,6 +458,11 @@ namespace Managers
 
             _exerciseUIController?.ResetCurrentPanel();
             DisplayCurrentExercise();
+
+            if (audioManager != null)
+            {
+                audioManager.PlaySound(ambientMusicName);
+            }
         }
 
         /// <summary>
