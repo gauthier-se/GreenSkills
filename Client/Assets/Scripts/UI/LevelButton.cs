@@ -1,3 +1,4 @@
+using Data;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -15,7 +16,11 @@ namespace UI
         [SerializeField] private TextMeshProUGUI levelNumberText;
         [SerializeField] private GameObject lockIcon;
         [SerializeField] private Image backgroundImage;
-        
+
+        [Header("Card Design")]
+        [SerializeField] private Image numberBadge;
+        [SerializeField] private Image categoryAccentBar;
+
         [Header("Visual States")]
         [SerializeField] private Color unlockedColor = Color.white;
         [SerializeField] private Color lockedColor = new Color(0.5f, 0.5f, 0.5f, 1f);
@@ -29,6 +34,8 @@ namespace UI
         
         private int _levelId;
         private bool _isUnlocked;
+        private Category _category;
+        private UITheme _theme;
 
         /// <summary>
         /// Gets the level ID associated with this button.
@@ -46,22 +53,27 @@ namespace UI
         /// <param name="id">The level ID (1-based).</param>
         /// <param name="unlocked">Whether this level is unlocked.</param>
         /// <param name="onClickCallback">Callback to execute when the button is clicked.</param>
-        public void Initialize(int id, bool unlocked, System.Action<int> onClickCallback)
+        /// <param name="category">The dominant category of the level.</param>
+        /// <param name="theme">Optional UITheme for category-colored backgrounds.</param>
+        public void Initialize(int id, bool unlocked, System.Action<int> onClickCallback,
+            Category category = Category.Environment, UITheme theme = null)
         {
             _levelId = id;
             _isUnlocked = unlocked;
-            
+            _category = category;
+            _theme = theme;
+
             // Set the level number text
             if (levelNumberText != null)
             {
                 levelNumberText.text = id.ToString();
             }
-            
+
             // Configure button state
             if (button != null)
             {
                 button.interactable = unlocked;
-                
+
                 // Clear existing listeners and add new one
                 button.onClick.RemoveAllListeners();
                 if (unlocked && onClickCallback != null)
@@ -69,18 +81,20 @@ namespace UI
                     button.onClick.AddListener(() => onClickCallback(_levelId));
                 }
             }
-            
-            // Show/hide lock icon
+
+            // Show/hide lock icon and level number
             if (lockIcon != null)
             {
                 lockIcon.SetActive(!unlocked);
             }
-            
-            // Set background color
-            if (backgroundImage != null)
+
+            if (levelNumberText != null)
             {
-                backgroundImage.color = unlocked ? unlockedColor : lockedColor;
+                levelNumberText.gameObject.SetActive(unlocked);
             }
+
+            // Set background color
+            ApplyBackgroundColor(unlocked);
 
             if (unlocked)
                 ShowStars(Managers.LevelScoreManager.GetLevelStars(id));
@@ -95,26 +109,68 @@ namespace UI
         public void UpdateLockState(bool unlocked)
         {
             _isUnlocked = unlocked;
-            
+
             if (button != null)
             {
                 button.interactable = unlocked;
             }
-            
+
             if (lockIcon != null)
             {
                 lockIcon.SetActive(!unlocked);
             }
-            
-            if (backgroundImage != null)
-            {
-                backgroundImage.color = unlocked ? unlockedColor : lockedColor;
-            }
+
+            ApplyBackgroundColor(unlocked);
 
             if (unlocked)
                 ShowStars(Managers.LevelScoreManager.GetLevelStars(_levelId));
             else
                 HideStars();
+        }
+
+        private void ApplyBackgroundColor(bool unlocked)
+        {
+            if (backgroundImage == null) return;
+
+            if (_theme != null)
+            {
+                Color categoryColor = _theme.GetCategoryColor(_category);
+                Color subtleColor = _theme.GetCategorySubtleColor(_category);
+
+                if (unlocked)
+                {
+                    backgroundImage.color = subtleColor;
+
+                    if (categoryAccentBar != null)
+                    {
+                        categoryAccentBar.gameObject.SetActive(true);
+                        categoryAccentBar.color = categoryColor;
+                    }
+
+                    if (numberBadge != null)
+                        numberBadge.color = categoryColor;
+
+                    if (levelNumberText != null)
+                        levelNumberText.color = Color.white;
+                }
+                else
+                {
+                    backgroundImage.color = _theme.neutral100;
+
+                    if (categoryAccentBar != null)
+                        categoryAccentBar.gameObject.SetActive(false);
+
+                    if (numberBadge != null)
+                        numberBadge.color = _theme.neutral300;
+
+                    if (levelNumberText != null)
+                        levelNumberText.color = _theme.neutral500;
+                }
+            }
+            else
+            {
+                backgroundImage.color = unlocked ? unlockedColor : lockedColor;
+            }
         }
 
         /// <summary>

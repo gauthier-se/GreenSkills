@@ -36,6 +36,7 @@ namespace Managers
         [SerializeField] private bool enableDebugLogs = true;
 
         private int _cachedLevelCount = -1;
+        private AllLevelsWithExercisesDto _cachedLevels;
 
         public void Awake()
         {
@@ -67,17 +68,44 @@ namespace Managers
             if (_cachedLevelCount >= 0)
                 return _cachedLevelCount;
 
+            LoadAndCacheLevels();
+            return _cachedLevelCount;
+        }
+
+        /// <summary>
+        /// Returns the dominant category for a given level (based on first exercise).
+        /// Falls back to Category.Environment if not found.
+        /// </summary>
+        public Category GetLevelCategory(int levelId)
+        {
+            LoadAndCacheLevels();
+
+            if (_cachedLevels?.levels == null)
+                return Category.Environment;
+
+            var level = _cachedLevels.levels.FirstOrDefault(l => l.levelId == levelId);
+            if (level?.exercises == null || level.exercises.Length == 0)
+                return Category.Environment;
+
+            return (Category)level.exercises[0].category;
+        }
+
+        private void LoadAndCacheLevels()
+        {
+            if (_cachedLevels != null)
+                return;
+
             TextAsset jsonFile = Resources.Load<TextAsset>("Data/levels_data");
             if (jsonFile == null)
             {
                 LogError("File 'Data/levels_data' not found in Resources!");
-                return 0;
+                _cachedLevelCount = 0;
+                return;
             }
 
-            var allLevels = JsonUtility.FromJson<AllLevelsWithExercisesDto>(jsonFile.text);
-            _cachedLevelCount = allLevels?.levels?.Length ?? 0;
+            _cachedLevels = JsonUtility.FromJson<AllLevelsWithExercisesDto>(jsonFile.text);
+            _cachedLevelCount = _cachedLevels?.levels?.Length ?? 0;
             Log($"Level count loaded: {_cachedLevelCount}");
-            return _cachedLevelCount;
         }
 
         /// <summary>

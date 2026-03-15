@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Data;
 using Managers;
 using TMPro;
 using UnityEngine;
@@ -22,6 +23,9 @@ namespace UI
 
         [Header("Settings")]
         [SerializeField] private SettingsPanelController settingsPanel;
+
+        [Header("Theme")]
+        [SerializeField] private UITheme theme;
 
         [Header("Gamification Display")]
         [SerializeField] private TextMeshProUGUI playerLevelText;
@@ -72,7 +76,8 @@ namespace UI
                 LevelButton instance = Instantiate(levelButtonPrefab, levelButtonsContainer);
                 bool unlocked = GameManager.Instance != null
                     && GameManager.Instance.IsLevelUnlocked(levelId);
-                instance.Initialize(levelId, unlocked, LoadLevel);
+                Category cat = ExerciseManager.Instance.GetLevelCategory(levelId);
+                instance.Initialize(levelId, unlocked, LoadLevel, cat, theme);
                 _spawnedButtons.Add(instance);
             }
         }
@@ -89,8 +94,8 @@ namespace UI
                 int levelId = i + 1;
                 bool unlocked = GameManager.Instance != null
                     && GameManager.Instance.IsLevelUnlocked(levelId);
-
-                _spawnedButtons[i].Initialize(levelId, unlocked, LoadLevel);
+                Category cat = ExerciseManager.Instance.GetLevelCategory(levelId);
+                _spawnedButtons[i].Initialize(levelId, unlocked, LoadLevel, cat, theme);
             }
         }
 
