@@ -1,3 +1,4 @@
+using Data;
 using Managers;
 using TMPro;
 using UnityEngine;
@@ -27,6 +28,10 @@ namespace UI
         [SerializeField] private GameObject loginPanel;
         [SerializeField] private GameObject registerPanel;
 
+        [Header("Theme")]
+        [SerializeField] private UITheme theme;
+        [SerializeField] private AuthLayoutController authLayout;
+
         private bool _isLoading;
 
         private void Awake()
@@ -46,6 +51,8 @@ namespace UI
         {
             ClearError();
             ClearInputs();
+            ApplyTheme();
+            authLayout?.SetSectionLabel("CONNEXION");
         }
 
         /// <summary>
@@ -125,6 +132,27 @@ namespace UI
         }
 
         /// <summary>
+        /// Applies theme colors to error text and login button.
+        /// </summary>
+        private void ApplyTheme()
+        {
+            if (theme == null) return;
+
+            if (errorText != null)
+                errorText.color = theme.error;
+
+            if (loginButton != null)
+            {
+                var colors = loginButton.colors;
+                colors.normalColor = theme.primary;
+                colors.highlightedColor = theme.primaryLight;
+                colors.pressedColor = theme.primaryDark;
+                colors.disabledColor = theme.neutral300;
+                loginButton.colors = colors;
+            }
+        }
+
+        /// <summary>
         /// Shows an error message to the user.
         /// </summary>
         /// <param name="message">The error message to display.</param>
@@ -133,6 +161,7 @@ namespace UI
             if (errorText != null)
             {
                 errorText.text = message;
+                if (theme != null) errorText.color = theme.error;
                 errorText.gameObject.SetActive(true);
             }
 
