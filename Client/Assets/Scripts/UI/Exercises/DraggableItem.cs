@@ -12,6 +12,7 @@ namespace UI.Exercises
     {
         [Header("Settings")]
         [SerializeField] private float dragAlpha = 0.6f;
+        [SerializeField] private float dragScale = 1.05f;
 
         /// <summary>
         /// Index of this item in the exercise data.
@@ -38,12 +39,14 @@ namespace UI.Exercises
         private Vector3 _originalPosition;
         private Transform _originalParent;
         private Canvas _canvas;
+        private Vector3 _originalScale;
 
         private void Awake()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
             _rectTransform = GetComponent<RectTransform>();
             _canvas = GetComponentInParent<Canvas>();
+            _originalScale = transform.localScale;
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -54,6 +57,9 @@ namespace UI.Exercises
 
             // Make the item render on top
             transform.SetParent(_canvas.transform);
+
+            // Scale up for drag feedback
+            transform.localScale = _originalScale * dragScale;
 
             // Make item semi-transparent and allow raycasts through
             _canvasGroup.alpha = dragAlpha;
@@ -69,6 +75,7 @@ namespace UI.Exercises
         public void OnEndDrag(PointerEventData eventData)
         {
             // Restore visual state
+            transform.localScale = _originalScale;
             _canvasGroup.alpha = 1f;
             _canvasGroup.blocksRaycasts = true;
 
@@ -89,6 +96,7 @@ namespace UI.Exercises
         public void ResetPosition(Transform parent)
         {
             transform.SetParent(parent);
+            transform.localScale = _originalScale;
             CurrentCategoryIndex = -1;
             _canvasGroup.alpha = 1f;
             _canvasGroup.blocksRaycasts = true;
