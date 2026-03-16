@@ -184,7 +184,7 @@ namespace UI.Exercises
         /// </summary>
         public void ShowFeedbackPanel(string explanation, bool isCorrect)
         {
-            _currentController?.Hide();
+            _currentController?.SetInteractable(false);
             feedbackPanel?.Show(explanation, isCorrect);
         }
 

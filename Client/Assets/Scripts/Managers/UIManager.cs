@@ -114,7 +114,9 @@ namespace Managers
         /// <param name="starsEarned">Number of stars earned (1-3).</param>
         /// <param name="hasNextLevel">Whether there's a next level available.</param>
         /// <param name="rewards">Gamification rewards earned from this level.</param>
-        public void ShowVictoryScreen(int score, int starsEarned, bool hasNextLevel, LevelRewards rewards = default)
+        /// <param name="levelTheme">Optional level theme name for category accent coloring.</param>
+        public void ShowVictoryScreen(int score, int starsEarned, bool hasNextLevel,
+            LevelRewards rewards = default, string levelTheme = null)
         {
             Debug.Log($"[UIManager] Displaying level summary — Score: {score}, Stars: {starsEarned}");
 
@@ -126,7 +128,7 @@ namespace Managers
 
             if (levelSummaryController != null)
             {
-                levelSummaryController.Show(score, starsEarned, hasNextLevel, rewards);
+                levelSummaryController.Show(score, starsEarned, hasNextLevel, rewards, levelTheme);
             }
             else
             {
