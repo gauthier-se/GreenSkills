@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7434723392134373116}
   - component: {fileID: 8061033951870756462}
   - component: {fileID: 4706156078518804626}
+  - component: {fileID: -5861695381345645708}
   m_Layer: 5
   m_Name: DraggableItemPrefab
   m_TagString: Untagged
@@ -103,6 +104,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI.Exercises.DraggableItem
   dragAlpha: 0.6
+  dragScale: 1.05
+--- !u!114 &-5861695381345645708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 819720959491324799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &7040217730125675906
 GameObject:
   m_ObjectHideFlags: 0

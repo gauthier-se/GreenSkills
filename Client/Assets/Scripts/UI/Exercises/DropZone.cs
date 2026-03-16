@@ -1,3 +1,4 @@
+using Data;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,11 +11,9 @@ namespace UI.Exercises
     /// </summary>
     public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
     {
-        [Header("Settings")]
+        [Header("Fallback Colors")]
         [SerializeField] private Color normalColor = Color.white;
         [SerializeField] private Color highlightColor = new Color(0.8f, 0.8f, 1f);
-        [SerializeField] private Color correctColor = new Color(0.2f, 0.8f, 0.2f);
-        [SerializeField] private Color incorrectColor = new Color(0.8f, 0.2f, 0.2f);
 
         /// <summary>
         /// Index of this category in the exercise data.
@@ -33,10 +32,19 @@ namespace UI.Exercises
 
         [SerializeField] private Transform _itemContainer;
         private Image _backgroundImage;
+        private UITheme _theme;
 
         private void Awake()
         {
             _backgroundImage = GetComponent<Image>();
+        }
+
+        /// <summary>
+        /// Sets the UITheme for themed styling.
+        /// </summary>
+        public void SetTheme(UITheme uiTheme)
+        {
+            _theme = uiTheme;
         }
 
         public void OnDrop(PointerEventData eventData)
@@ -50,7 +58,7 @@ namespace UI.Exercises
             // Highlight when dragging over
             if (eventData.dragging && _backgroundImage != null)
             {
-                _backgroundImage.color = highlightColor;
+                _backgroundImage.color = _theme != null ? _theme.bgSurface : highlightColor;
             }
         }
 
@@ -59,7 +67,7 @@ namespace UI.Exercises
             // Remove highlight
             if (_backgroundImage != null)
             {
-                _backgroundImage.color = normalColor;
+                _backgroundImage.color = _theme != null ? _theme.bgCard : normalColor;
             }
         }
 
@@ -72,10 +80,12 @@ namespace UI.Exercises
 
             if (isCorrect == null)
             {
-                _backgroundImage.color = normalColor;
+                _backgroundImage.color = _theme != null ? _theme.bgCard : normalColor;
             }
             else
             {
+                Color correctColor = _theme != null ? _theme.success : new Color(0.2f, 0.8f, 0.2f);
+                Color incorrectColor = _theme != null ? _theme.error : new Color(0.8f, 0.2f, 0.2f);
                 _backgroundImage.color = isCorrect.Value ? correctColor : incorrectColor;
             }
         }
@@ -87,7 +97,7 @@ namespace UI.Exercises
         {
             if (_backgroundImage != null)
             {
-                _backgroundImage.color = normalColor;
+                _backgroundImage.color = _theme != null ? _theme.bgCard : normalColor;
             }
         }
     }

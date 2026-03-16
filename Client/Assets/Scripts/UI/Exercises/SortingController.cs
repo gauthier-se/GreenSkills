@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Data;
 using Data.Exercises;
 using TMPro;
 using UnityEngine;
@@ -22,9 +23,8 @@ namespace UI.Exercises
         [SerializeField] private GameObject draggableItemPrefab;
         [SerializeField] private GameObject dropZonePrefab;
 
-        [Header("Feedback Colors")]
-        [SerializeField] private Color correctColor = new Color(0.2f, 0.8f, 0.2f);
-        [SerializeField] private Color incorrectColor = new Color(0.8f, 0.2f, 0.2f);
+        [Header("Theme")]
+        [SerializeField] private UITheme theme;
 
         private SortingExerciseData _exerciseData;
         private List<DraggableItem> _draggableItems = new List<DraggableItem>();
@@ -64,6 +64,11 @@ namespace UI.Exercises
             // Create draggable items
             CreateDraggableItems();
 
+            // Apply theme styling
+            ApplyDefaultItemStyle();
+            ApplyDefaultDropZoneStyle();
+            ApplyValidateButtonStyle();
+
             // Update validate button state
             UpdateValidateButtonState();
         }
@@ -93,20 +98,17 @@ namespace UI.Exercises
                 dropZone.CategoryIndex = i;
                 dropZone.Controller = this;
 
+                // Pass theme to the drop zone
+                if (theme != null)
+                {
+                    dropZone.SetTheme(theme);
+                }
+
                 // Set category label
                 TextMeshProUGUI label = zoneObj.GetComponentInChildren<TextMeshProUGUI>();
                 if (label != null)
                 {
                     label.text = categoryData.categoryName;
-                }
-
-                // Set category color
-                Image bgImage = zoneObj.GetComponent<Image>();
-                if (bgImage != null && categoryData.categoryColor != Color.white)
-                {
-                    Color color = categoryData.categoryColor;
-                    color.a = 0.3f; // Make it semi-transparent
-                    bgImage.color = color;
                 }
 
                 _dropZones.Add(dropZone);
@@ -120,7 +122,13 @@ namespace UI.Exercises
         {
             ClearDraggableItems();
 
-            if (itemsContainer == null || draggableItemPrefab == null || _exerciseData == null) return;
+            if (itemsContainer == null || draggableItemPrefab == null || _exerciseData == null)
+            {
+                Debug.LogError($"SortingController.CreateDraggableItems: EARLY RETURN — itemsContainer={itemsContainer}, draggableItemPrefab={draggableItemPrefab}, _exerciseData={_exerciseData}");
+                return;
+            }
+
+            Debug.Log($"SortingController: Creating {_exerciseData.items.Count} draggable items into container '{itemsContainer.name}'");
 
             // Shuffle items for variety
             List<int> indices = new List<int>();
@@ -269,6 +277,10 @@ namespace UI.Exercises
         {
             if (_exerciseData == null) return;
 
+            Color feedbackCorrectColor = theme != null ? theme.success : new Color(0.2f, 0.8f, 0.2f);
+            Color feedbackIncorrectColor = theme != null ? theme.error : new Color(0.8f, 0.2f, 0.2f);
+            Color feedbackTextColor = theme != null ? theme.textOnDark : Color.white;
+
             // Show feedback for each item
             foreach (var item in _draggableItems)
             {
@@ -281,7 +293,14 @@ namespace UI.Exercises
                     Image itemImage = item.GetComponent<Image>();
                     if (itemImage != null)
                     {
-                        itemImage.color = itemCorrect ? correctColor : incorrectColor;
+                        itemImage.color = itemCorrect ? feedbackCorrectColor : feedbackIncorrectColor;
+                    }
+
+                    // Update text color for readability on colored background
+                    TextMeshProUGUI itemText = item.GetComponentInChildren<TextMeshProUGUI>();
+                    if (itemText != null)
+                    {
+                        itemText.color = feedbackTextColor;
                     }
                 }
             }
@@ -324,13 +343,6 @@ namespace UI.Exercises
                 if (item != null)
                 {
                     item.ResetPosition(itemsContainer);
-
-                    // Reset color
-                    Image itemImage = item.GetComponent<Image>();
-                    if (itemImage != null)
-                    {
-                        itemImage.color = Color.white;
-                    }
                 }
             }
 
@@ -343,12 +355,92 @@ namespace UI.Exercises
                 }
             }
 
+            // Restore theme styling
+            ApplyDefaultItemStyle();
+
             UpdateValidateButtonState();
             SetInteractable(true);
         }
 
         /// <summary>
-        /// Clears all drop zones.
+        /// Applies the default theme styling to all draggable items.
+        /// </summary>
+        private void ApplyDefaultItemStyle()
+        {
+            if (theme == null)
+            {
+                Debug.LogWarning("SortingController: UITheme is not assigned! Wire MainTheme in the Inspector.");
+                return;
+            }
+
+            foreach (var item in _draggableItems)
+            {
+                if (item == null) continue;
+
+                Image itemImage = item.GetComponent<Image>();
+                if (itemImage != null)
+                    itemImage.color = theme.bgCard;
+
+                TextMeshProUGUI itemText = item.GetComponentInChildren<TextMeshProUGUI>();
+                if (itemText != null)
+                    itemText.color = theme.textPrimary;
+
+                Outline outline = item.GetComponent<Outline>();
+                if (outline != null)
+                    outline.effectColor = theme.borderDefault;
+            }
+        }
+
+        /// <summary>
+        /// Applies the default theme styling to all drop zones.
+        /// </summary>
+        private void ApplyDefaultDropZoneStyle()
+        {
+            if (theme == null) return;
+
+            foreach (var zone in _dropZones)
+            {
+                if (zone == null) continue;
+
+                Image zoneImage = zone.GetComponent<Image>();
+                if (zoneImage != null)
+                    zoneImage.color = theme.bgCard;
+
+                Outline outline = zone.GetComponent<Outline>();
+                if (outline != null)
+                    outline.effectColor = theme.borderStrong;
+
+                TextMeshProUGUI label = zone.GetComponentInChildren<TextMeshProUGUI>();
+                if (label != null)
+                    label.color = theme.textPrimary;
+            }
+        }
+
+        /// <summary>
+        /// Applies the brand green styling to the validate button.
+        /// </summary>
+        private void ApplyValidateButtonStyle()
+        {
+            if (validateButton == null || theme == null) return;
+
+            var image = validateButton.GetComponent<Image>();
+            if (image != null)
+                image.color = theme.primary;
+
+            var text = validateButton.GetComponentInChildren<TextMeshProUGUI>();
+            if (text != null)
+                text.color = theme.textOnDark;
+
+            var colors = validateButton.colors;
+            colors.normalColor = theme.primary;
+            colors.highlightedColor = theme.primaryLight;
+            colors.pressedColor = theme.primaryDark;
+            colors.disabledColor = theme.neutral300;
+            validateButton.colors = colors;
+        }
+
+        /// <summary>
+        /// Clears all drop zones, including any pre-existing children in the container.
         /// </summary>
         private void ClearDropZones()
         {
@@ -360,10 +452,19 @@ namespace UI.Exercises
                 }
             }
             _dropZones.Clear();
+
+            // Destroy any leftover children (e.g. template "New Text" ghost items)
+            if (categoriesContainer != null)
+                for (int i = categoriesContainer.childCount - 1; i >= 0; i--)
+                {
+                    var child = categoriesContainer.GetChild(i).gameObject;
+                    child.SetActive(false);
+                    Destroy(child);
+                }
         }
 
         /// <summary>
-        /// Clears all draggable items.
+        /// Clears all draggable items, including any pre-existing children in the container.
         /// </summary>
         private void ClearDraggableItems()
         {
@@ -375,6 +476,15 @@ namespace UI.Exercises
                 }
             }
             _draggableItems.Clear();
+
+            // Destroy any leftover children (e.g. template "New Text" ghost items)
+            if (itemsContainer != null)
+                for (int i = itemsContainer.childCount - 1; i >= 0; i--)
+                {
+                    var child = itemsContainer.GetChild(i).gameObject;
+                    child.SetActive(false);
+                    Destroy(child);
+                }
         }
 
         /// <summary>

@@ -1344,7 +1344,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6811785172832656545, guid: bcacd11e8a5434c09841352a9cdb77ef, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -300
+      value: -100
       objectReference: {fileID: 0}
     - target: {fileID: 6811785172832656545, guid: bcacd11e8a5434c09841352a9cdb77ef, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4644,6 +4644,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2308748718717116030, guid: 1572e6051088743bf8630d40709fe145, type: 3}
+      propertyPath: theme
+      value: 
+      objectReference: {fileID: 11400000, guid: dca6d602255b9473185e1ef8a9fb8037, type: 2}
     - target: {fileID: 4799585993324102572, guid: 1572e6051088743bf8630d40709fe145, type: 3}
       propertyPath: m_Name
       value: SortingPanel
@@ -4718,7 +4722,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6618314174862000019, guid: 1572e6051088743bf8630d40709fe145, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -300
+      value: -400
       objectReference: {fileID: 0}
     - target: {fileID: 6618314174862000019, guid: 1572e6051088743bf8630d40709fe145, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
