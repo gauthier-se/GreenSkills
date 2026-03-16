@@ -1620,7 +1620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb540c9b6751a4b37978f87fae55dd92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Managers.AuthManager
-  apiBaseUrl: http://localhost:8080
+  apiBaseUrl: https://api.greenskills.seyzeriat.com
 --- !u!4 &1180491729
 Transform:
   m_ObjectHideFlags: 0
