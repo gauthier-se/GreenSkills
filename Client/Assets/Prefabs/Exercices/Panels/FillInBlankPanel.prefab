@@ -98,13 +98,9 @@ MonoBehaviour:
   wordOptionsContainer: {fileID: 5469636251172888156}
   selectedWordsContainer: {fileID: 5250764748176710428}
   wordButtonPrefab: {fileID: 6276128247201395288, guid: 8069c588cc9b54e05be83cb2c88cbdd3, type: 3}
-  validateButton: {fileID: 0}
+  validateButton: {fileID: 7995412987074001439}
   blankPlaceholder: _____
-  blankColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  filledColor: {r: 0, g: 1, b: 0, a: 1}
-  correctColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
-  incorrectColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
-  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  theme: {fileID: 11400000, guid: dca6d602255b9473185e1ef8a9fb8037, type: 2}
 --- !u!1 &5866097846079675698
 GameObject:
   m_ObjectHideFlags: 0

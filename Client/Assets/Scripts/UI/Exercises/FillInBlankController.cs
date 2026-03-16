@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Data;
 using Data.Exercises;
 using TMPro;
 using UnityEngine;
@@ -21,16 +22,13 @@ namespace UI.Exercises
 
         [Header("Blank Display Settings")]
         [SerializeField] private string blankPlaceholder = "_____";
-        [SerializeField] private Color blankColor = Color.yellow;
-        [SerializeField] private Color filledColor = Color.green;
 
-        [Header("Feedback Colors")]
-        [SerializeField] private Color correctColor = new Color(0.2f, 0.8f, 0.2f);
-        [SerializeField] private Color incorrectColor = new Color(0.8f, 0.2f, 0.2f);
-        [SerializeField] private Color defaultColor = Color.white;
+        [Header("Theme")]
+        [SerializeField] private UITheme theme;
 
         private FillInBlankExerciseData _exerciseData;
         private List<Button> _wordButtons = new List<Button>();
+        private List<Image> _wordButtonImages = new List<Image>();
         private List<Button> _selectedWordButtons = new List<Button>();
         private List<string> _selectedAnswers = new List<string>();
         private int _currentBlankIndex = 0;
@@ -74,6 +72,10 @@ namespace UI.Exercises
             // Create word option buttons
             CreateWordButtons();
 
+            // Apply theme styling
+            ApplyDefaultButtonStyle();
+            ApplyValidateButtonStyle();
+
             // Update validate button state
             UpdateValidateButtonState();
         }
@@ -86,6 +88,9 @@ namespace UI.Exercises
             if (sentenceText == null || _exerciseData == null) return;
 
             string displayText = _exerciseData.sentenceWithBlanks;
+
+            Color blankColor = theme != null ? theme.primary : Color.yellow;
+            Color filledColor = theme != null ? theme.primaryLight : Color.green;
 
             for (int i = 0; i < _exerciseData.BlankCount; i++)
             {
@@ -142,6 +147,7 @@ namespace UI.Exercises
                 button.onClick.AddListener(() => OnWordSelected(capturedWord, button));
 
                 _wordButtons.Add(button);
+                _wordButtonImages.Add(button.GetComponent<Image>());
             }
         }
 
@@ -172,9 +178,17 @@ namespace UI.Exercises
             // Fill the blank
             _selectedAnswers[blankToFill] = word;
 
-            // Disable the selected button
+            // Disable the selected button and apply dimmed styling
             button.interactable = false;
             _selectedWordButtons.Add(button);
+
+            int buttonIndex = _wordButtons.IndexOf(button);
+            if (buttonIndex >= 0 && theme != null)
+            {
+                if (buttonIndex < _wordButtonImages.Count && _wordButtonImages[buttonIndex] != null)
+                    _wordButtonImages[buttonIndex].color = theme.neutral50;
+                SetWordButtonTextColor(buttonIndex, theme.textMuted);
+            }
 
             // Update display
             UpdateSentenceDisplay();
@@ -228,6 +242,9 @@ namespace UI.Exercises
         {
             if (_exerciseData == null) return;
 
+            Color feedbackCorrectColor = theme != null ? theme.success : new Color(0.2f, 0.8f, 0.2f);
+            Color feedbackIncorrectColor = theme != null ? theme.error : new Color(0.8f, 0.2f, 0.2f);
+
             string displayText = _exerciseData.sentenceWithBlanks;
 
             for (int i = 0; i < _exerciseData.BlankCount; i++)
@@ -245,7 +262,7 @@ namespace UI.Exercises
                     thisAnswerCorrect = playerAnswer.Equals(correct, System.StringComparison.OrdinalIgnoreCase);
                 }
 
-                Color answerColor = thisAnswerCorrect ? correctColor : incorrectColor;
+                Color answerColor = thisAnswerCorrect ? feedbackCorrectColor : feedbackIncorrectColor;
                 string displayWord = thisAnswerCorrect ? playerAnswer : $"{playerAnswer} → {correct}";
 
                 displayText = displayText.Replace($"{{{i}}}",
@@ -274,9 +291,67 @@ namespace UI.Exercises
 
             _selectedWordButtons.Clear();
 
+            // Restore theme styling
+            ApplyDefaultButtonStyle();
+
             UpdateSentenceDisplay();
             UpdateValidateButtonState();
             SetInteractable(true);
+        }
+
+        /// <summary>
+        /// Applies the default theme styling to all word option buttons.
+        /// </summary>
+        private void ApplyDefaultButtonStyle()
+        {
+            if (theme == null)
+            {
+                Debug.LogWarning("FillInBlankController: UITheme is not assigned! Wire MainTheme in the Inspector.");
+                return;
+            }
+
+            for (int i = 0; i < _wordButtonImages.Count; i++)
+            {
+                if (_wordButtonImages[i] != null)
+                    _wordButtonImages[i].color = theme.bgCard;
+
+                SetWordButtonTextColor(i, theme.textPrimary);
+                SetWordButtonOutlineColor(i, theme.borderDefault);
+            }
+
+            foreach (var button in _wordButtons)
+            {
+                if (button == null) continue;
+                var colors = button.colors;
+                colors.normalColor = theme.bgCard;
+                colors.highlightedColor = theme.bgSurface;
+                colors.pressedColor = theme.borderStrong;
+                colors.disabledColor = theme.neutral50;
+                button.colors = colors;
+            }
+        }
+
+        /// <summary>
+        /// Applies the brand green styling to the validate button.
+        /// </summary>
+        private void ApplyValidateButtonStyle()
+        {
+            if (validateButton == null || theme == null) return;
+
+            var image = validateButton.GetComponent<Image>();
+            if (image != null)
+                image.color = theme.primary;
+
+            var text = validateButton.GetComponentInChildren<TextMeshProUGUI>();
+            if (text != null)
+                text.color = theme.textOnDark;
+
+            var colors = validateButton.colors;
+            colors.normalColor = theme.primary;
+            colors.highlightedColor = theme.primaryLight;
+            colors.pressedColor = theme.primaryDark;
+            colors.disabledColor = theme.neutral300;
+            validateButton.colors = colors;
         }
 
         /// <summary>
@@ -293,7 +368,26 @@ namespace UI.Exercises
             }
 
             _wordButtons.Clear();
+            _wordButtonImages.Clear();
             _selectedWordButtons.Clear();
+        }
+
+        private void SetWordButtonTextColor(int index, Color color)
+        {
+            if (index < _wordButtons.Count && _wordButtons[index] != null)
+            {
+                var text = _wordButtons[index].GetComponentInChildren<TextMeshProUGUI>();
+                if (text != null) text.color = color;
+            }
+        }
+
+        private void SetWordButtonOutlineColor(int index, Color color)
+        {
+            if (index < _wordButtons.Count && _wordButtons[index] != null)
+            {
+                var outline = _wordButtons[index].GetComponent<Outline>();
+                if (outline != null) outline.effectColor = color;
+            }
         }
 
         /// <summary>
