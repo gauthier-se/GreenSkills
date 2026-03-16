@@ -468,7 +468,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UI.Exercises.MatchingController
   panelRoot: {fileID: 6272794501067758778}
   canvasGroup: {fileID: 0}
-  instructionText: {fileID: 3926406687403020069}
+  theme: {fileID: 11400000, guid: dca6d602255b9473185e1ef8a9fb8037, type: 2}
   leftHeaderText: {fileID: 0}
   rightHeaderText: {fileID: 0}
   leftColumnContainer: {fileID: 8787535152762632597}
@@ -477,11 +477,8 @@ MonoBehaviour:
   clearButton: {fileID: 0}
   linesContainer: {fileID: 3630602274145190677}
   linePrefab: {fileID: 6832812836932185251, guid: bf36c28afbd2243fe94c557e035ab922, type: 3}
-  lineColor: {r: 0, g: 0, b: 1, a: 1}
   lineWidth: 4
   matchableItemPrefab: {fileID: 3170418051521846756, guid: 2d9af4fb1d188484ebd60c7905dba8ae, type: 3}
-  correctColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
-  incorrectColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
 --- !u!1 &8038768094422824268
 GameObject:
   m_ObjectHideFlags: 0

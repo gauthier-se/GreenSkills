@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using Data.Exercises;
+using Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -37,17 +36,29 @@ namespace UI.Exercises
         /// </summary>
         public MatchingController Controller { get; set; }
 
-        [SerializeField] private Color normalColor = Color.white;
-        [SerializeField] private Color selectedColor = new Color(0.7f, 0.7f, 1f);
-        [SerializeField] private Color matchedColor = new Color(0.7f, 1f, 0.7f);
-        [SerializeField] private Color correctColor = new Color(0.2f, 0.8f, 0.2f);
-        [SerializeField] private Color incorrectColor = new Color(0.8f, 0.2f, 0.2f);
-
+        private UITheme _theme;
         private Image _backgroundImage;
+        private TextMeshProUGUI _label;
+
+        // Fallback colors when theme is not assigned
+        private static readonly Color FallbackNormal = Color.white;
+        private static readonly Color FallbackSelected = new Color(0.7f, 0.7f, 1f);
+        private static readonly Color FallbackMatched = new Color(0.7f, 1f, 0.7f);
+        private static readonly Color FallbackCorrect = new Color(0.2f, 0.8f, 0.2f);
+        private static readonly Color FallbackIncorrect = new Color(0.8f, 0.2f, 0.2f);
 
         private void Awake()
         {
             _backgroundImage = GetComponent<Image>();
+            _label = GetComponentInChildren<TextMeshProUGUI>();
+        }
+
+        /// <summary>
+        /// Sets the UITheme for theme-driven styling.
+        /// </summary>
+        public void SetTheme(UITheme theme)
+        {
+            _theme = theme;
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -62,15 +73,36 @@ namespace UI.Exercises
         {
             if (_backgroundImage == null) return;
 
-            _backgroundImage.color = state switch
+            if (_theme != null)
             {
-                MatchableItemState.Normal => normalColor,
-                MatchableItemState.Selected => selectedColor,
-                MatchableItemState.Matched => matchedColor,
-                MatchableItemState.Correct => correctColor,
-                MatchableItemState.Incorrect => incorrectColor,
-                _ => normalColor
-            };
+                _backgroundImage.color = state switch
+                {
+                    MatchableItemState.Normal => _theme.bgCard,
+                    MatchableItemState.Selected => _theme.primarySubtle,
+                    MatchableItemState.Matched => new Color(_theme.primaryLight.r, _theme.primaryLight.g, _theme.primaryLight.b, 0.3f),
+                    MatchableItemState.Correct => _theme.success,
+                    MatchableItemState.Incorrect => _theme.error,
+                    _ => _theme.bgCard
+                };
+
+                if (_label != null)
+                {
+                    bool useWhiteText = state == MatchableItemState.Correct || state == MatchableItemState.Incorrect;
+                    _label.color = useWhiteText ? _theme.textOnDark : _theme.textPrimary;
+                }
+            }
+            else
+            {
+                _backgroundImage.color = state switch
+                {
+                    MatchableItemState.Normal => FallbackNormal,
+                    MatchableItemState.Selected => FallbackSelected,
+                    MatchableItemState.Matched => FallbackMatched,
+                    MatchableItemState.Correct => FallbackCorrect,
+                    MatchableItemState.Incorrect => FallbackIncorrect,
+                    _ => FallbackNormal
+                };
+            }
         }
 
         /// <summary>

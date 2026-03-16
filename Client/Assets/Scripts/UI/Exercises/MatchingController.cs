@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using Data;
 using Data.Exercises;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using RawImage = UnityEngine.UI.RawImage;
 
 namespace UI.Exercises
 {
@@ -12,6 +14,9 @@ namespace UI.Exercises
     /// </summary>
     public class MatchingController : BaseExerciseController
     {
+        [Header("Theme")]
+        [SerializeField] private UITheme theme;
+
         [Header("Matching UI Elements")]
         [SerializeField] private TextMeshProUGUI leftHeaderText;
         [SerializeField] private TextMeshProUGUI rightHeaderText;
@@ -23,15 +28,10 @@ namespace UI.Exercises
         [Header("Line Drawing")]
         [SerializeField] private RectTransform linesContainer;
         [SerializeField] private GameObject linePrefab;
-        [SerializeField] private Color lineColor = Color.blue;
         [SerializeField] private float lineWidth = 4f;
 
         [Header("Prefabs")]
         [SerializeField] private GameObject matchableItemPrefab;
-
-        [Header("Feedback Colors")]
-        [SerializeField] private Color correctColor = new Color(0.2f, 0.8f, 0.2f);
-        [SerializeField] private Color incorrectColor = new Color(0.8f, 0.2f, 0.2f);
 
         private MatchingExerciseData _exerciseData;
         private List<MatchableItem> _leftItems = new List<MatchableItem>();
@@ -96,6 +96,11 @@ namespace UI.Exercises
             CreateLeftItems();
             CreateRightItems();
 
+            // Apply theme styling
+            ApplyDefaultItemStyle();
+            ApplyValidateButtonStyle();
+            ApplyClearButtonStyle();
+
             // Clear any existing lines
             ClearConnectionLines();
 
@@ -155,6 +160,7 @@ namespace UI.Exercises
             item.PairIndex = pairIndex;
             item.IsLeftColumn = isLeft;
             item.Controller = this;
+            item.SetTheme(theme);
 
             // Set text
             TextMeshProUGUI label = itemObj.GetComponentInChildren<TextMeshProUGUI>();
@@ -360,34 +366,60 @@ namespace UI.Exercises
 
         /// <summary>
         /// Updates a line's position between two points.
+        /// Lines start from the right edge of the left item and end at the left edge of the right item.
         /// </summary>
         private void UpdateLinePosition(GameObject lineObj, RectTransform from, RectTransform to)
         {
             RectTransform lineRect = lineObj.GetComponent<RectTransform>();
-            Image lineImage = lineObj.GetComponent<Image>();
 
-            if (lineRect == null) return;
+            if (lineRect == null || linesContainer == null) return;
 
-            // Get world positions
-            Vector3 fromPos = from.position;
-            Vector3 toPos = to.position;
+            // Ensure pivot is centered for correct rotation
+            lineRect.pivot = new Vector2(0.5f, 0.5f);
+            lineRect.anchorMin = new Vector2(0.5f, 0.5f);
+            lineRect.anchorMax = new Vector2(0.5f, 0.5f);
 
-            // Calculate midpoint and distance
-            Vector3 midpoint = (fromPos + toPos) / 2f;
-            float distance = Vector3.Distance(fromPos, toPos);
+            // Get world corners to find exact edges
+            Vector3[] fromCorners = new Vector3[4];
+            Vector3[] toCorners = new Vector3[4];
+            from.GetWorldCorners(fromCorners); // 0=bottomLeft, 1=topLeft, 2=topRight, 3=bottomRight
+            to.GetWorldCorners(toCorners);
 
-            // Calculate angle
-            Vector3 direction = toPos - fromPos;
+            // Right edge center of left item
+            Vector3 fromWorld = (fromCorners[2] + fromCorners[3]) / 2f;
+            // Left edge center of right item
+            Vector3 toWorld = (toCorners[0] + toCorners[1]) / 2f;
+
+            // Convert world positions to linesContainer local space
+            Vector2 fromLocal, toLocal;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                linesContainer, RectTransformUtility.WorldToScreenPoint(null, fromWorld), null, out fromLocal);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                linesContainer, RectTransformUtility.WorldToScreenPoint(null, toWorld), null, out toLocal);
+
+            // Calculate midpoint, distance and angle in local space
+            Vector2 midpoint = (fromLocal + toLocal) / 2f;
+            float distance = Vector2.Distance(fromLocal, toLocal);
+            Vector2 direction = toLocal - fromLocal;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-            // Apply
-            lineRect.position = midpoint;
+            // Apply in local space
+            lineRect.localPosition = midpoint;
             lineRect.sizeDelta = new Vector2(distance, lineWidth);
-            lineRect.rotation = Quaternion.Euler(0, 0, angle);
+            lineRect.localRotation = Quaternion.Euler(0, 0, angle);
 
-            if (lineImage != null)
+            // Apply color (LinePrefab uses RawImage, not Image)
+            Color lineColorValue = theme != null ? theme.primaryLight : Color.blue;
+            RawImage rawImage = lineObj.GetComponent<RawImage>();
+            if (rawImage != null)
             {
-                lineImage.color = lineColor;
+                rawImage.color = lineColorValue;
+            }
+            else
+            {
+                Image image = lineObj.GetComponent<Image>();
+                if (image != null)
+                    image.color = lineColorValue;
             }
         }
 
@@ -469,6 +501,9 @@ namespace UI.Exercises
         {
             if (_exerciseData == null) return;
 
+            Color feedbackCorrectColor = theme != null ? theme.success : new Color(0.2f, 0.8f, 0.2f);
+            Color feedbackIncorrectColor = theme != null ? theme.error : new Color(0.8f, 0.2f, 0.2f);
+
             // Show feedback for each match
             foreach (var kvp in _matches)
             {
@@ -492,18 +527,28 @@ namespace UI.Exercises
                 }
             }
 
-            // Update line colors
+            // Update line colors (LinePrefab uses RawImage)
             foreach (var line in _connectionLines)
             {
-                Image lineImage = line?.GetComponent<Image>();
-                if (lineImage != null)
+                if (line == null) continue;
+
+                // Parse line name to get indices
+                string[] parts = line.name.Split('_');
+                if (parts.Length >= 3 && int.TryParse(parts[1], out int leftIdx) && int.TryParse(parts[2], out int rightIdx))
                 {
-                    // Parse line name to get indices
-                    string[] parts = line.name.Split('_');
-                    if (parts.Length >= 3 && int.TryParse(parts[1], out int leftIdx) && int.TryParse(parts[2], out int rightIdx))
+                    bool matchCorrect = leftIdx == rightIdx;
+                    Color lineColor = matchCorrect ? feedbackCorrectColor : feedbackIncorrectColor;
+
+                    RawImage rawImage = line.GetComponent<RawImage>();
+                    if (rawImage != null)
                     {
-                        bool matchCorrect = leftIdx == rightIdx;
-                        lineImage.color = matchCorrect ? correctColor : incorrectColor;
+                        rawImage.color = lineColor;
+                    }
+                    else
+                    {
+                        Image img = line.GetComponent<Image>();
+                        if (img != null)
+                            img.color = lineColor;
                     }
                 }
             }
@@ -527,6 +572,8 @@ namespace UI.Exercises
                 item?.ResetState();
             }
 
+            ApplyDefaultItemStyle();
+
             ClearConnectionLines();
             UpdateValidateButtonState();
             SetInteractable(true);
@@ -545,6 +592,91 @@ namespace UI.Exercises
                 }
             }
             items.Clear();
+        }
+
+        /// <summary>
+        /// Applies the default theme styling to all matchable items.
+        /// </summary>
+        private void ApplyDefaultItemStyle()
+        {
+            if (theme == null)
+            {
+                Debug.LogWarning("MatchingController: UITheme is not assigned! Wire MainTheme in the Inspector.");
+                return;
+            }
+
+            void StyleItems(List<MatchableItem> items)
+            {
+                foreach (var item in items)
+                {
+                    if (item == null) continue;
+
+                    Image itemImage = item.GetComponent<Image>();
+                    if (itemImage != null)
+                        itemImage.color = theme.bgCard;
+
+                    TextMeshProUGUI itemText = item.GetComponentInChildren<TextMeshProUGUI>();
+                    if (itemText != null)
+                        itemText.color = theme.textPrimary;
+
+                    Outline outline = item.GetComponent<Outline>();
+                    if (outline != null)
+                        outline.effectColor = theme.borderDefault;
+                }
+            }
+
+            StyleItems(_leftItems);
+            StyleItems(_rightItems);
+        }
+
+        /// <summary>
+        /// Applies the brand green styling to the validate button.
+        /// </summary>
+        private void ApplyValidateButtonStyle()
+        {
+            if (validateButton == null || theme == null) return;
+
+            var image = validateButton.GetComponent<Image>();
+            if (image != null)
+                image.color = theme.primary;
+
+            var text = validateButton.GetComponentInChildren<TextMeshProUGUI>();
+            if (text != null)
+                text.color = theme.textOnDark;
+
+            var colors = validateButton.colors;
+            colors.normalColor = theme.primary;
+            colors.highlightedColor = theme.primaryLight;
+            colors.pressedColor = theme.primaryDark;
+            colors.disabledColor = theme.neutral300;
+            validateButton.colors = colors;
+        }
+
+        /// <summary>
+        /// Applies theme styling to the clear button.
+        /// </summary>
+        private void ApplyClearButtonStyle()
+        {
+            if (clearButton == null || theme == null) return;
+
+            var image = clearButton.GetComponent<Image>();
+            if (image != null)
+                image.color = theme.bgCard;
+
+            var text = clearButton.GetComponentInChildren<TextMeshProUGUI>();
+            if (text != null)
+                text.color = theme.textPrimary;
+
+            var colors = clearButton.colors;
+            colors.normalColor = theme.bgCard;
+            colors.highlightedColor = theme.neutral50;
+            colors.pressedColor = theme.neutral300;
+            colors.disabledColor = theme.neutral300;
+            clearButton.colors = colors;
+
+            Outline outline = clearButton.GetComponent<Outline>();
+            if (outline != null)
+                outline.effectColor = theme.borderDefault;
         }
 
         protected override void OnDestroy()
