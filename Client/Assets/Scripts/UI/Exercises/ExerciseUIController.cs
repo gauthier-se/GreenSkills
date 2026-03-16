@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Data.Exercises;
 using UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace UI.Exercises
 {
@@ -33,8 +34,9 @@ namespace UI.Exercises
         [SerializeField] private ExerciseLayoutController layoutController;
 
         [Header("Feedback")]
-        [Tooltip("Reference to the explanation popup controller")]
-        [SerializeField] private ExplanationPopupController explanationPopup;
+        [Tooltip("Reference to the feedback panel controller")]
+        [FormerlySerializedAs("explanationPopup")]
+        [SerializeField] private FeedbackPanelController feedbackPanel;
 
         /// <summary>
         /// Event triggered when an answer is submitted by any exercise controller.
@@ -169,19 +171,30 @@ namespace UI.Exercises
         }
 
         /// <summary>
-        /// Gets the explanation popup controller.
+        /// Gets the feedback panel controller.
         /// </summary>
-        public ExplanationPopupController GetExplanationPopup()
+        public FeedbackPanelController GetFeedbackPanel()
         {
-            return explanationPopup;
+            return feedbackPanel;
         }
 
         /// <summary>
-        /// Resets the current exercise panel.
+        /// Shows the integrated feedback panel: hides the exercise, transitions the answer zone,
+        /// and displays the feedback panel inline.
+        /// </summary>
+        public void ShowFeedbackPanel(string explanation, bool isCorrect)
+        {
+            _currentController?.Hide();
+            feedbackPanel?.Show(explanation, isCorrect);
+        }
+
+        /// <summary>
+        /// Resets the current exercise panel and cleans up the feedback panel.
         /// </summary>
         public void ResetCurrentPanel()
         {
             _currentController?.Reset();
+            feedbackPanel?.HideImmediate();
         }
 
         /// <summary>
