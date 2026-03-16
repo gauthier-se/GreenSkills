@@ -324,7 +324,7 @@ namespace Managers
 
             if (uiManager != null)
             {
-                uiManager.ShowGameOverScreen();
+                uiManager.ShowGameOverScreen(_currentExerciseIndex, _currentExercises.Count);
             }
 
             if (audioManager != null)
