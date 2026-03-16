@@ -24,8 +24,8 @@ namespace Managers
         [SerializeField] private Color unlockedColor = Color.white;
 
         [Header("API Configuration")]
-        [Tooltip("API endpoint URL. Use 'local://level/' for mock data from Resources/Data/levels_data.json")]
-        [SerializeField] private string apiBaseUrl = "local://level/";
+        [Tooltip("API endpoint URL for loading levels. Use 'local://level/' for offline mock data.")]
+        [SerializeField] private string apiBaseUrl = "https://api.greenskills.seyzeriat.com/api/levels/";
 
         private void OnEnable()
         {
@@ -141,10 +141,7 @@ namespace Managers
         {
             Debug.Log($"Loading level {levelId}...");
 
-            // Force local mode for MVP - use mock data from Resources/Data/levels_data.json
-            // This ensures the game works offline without an API server
-            const string localApiBaseUrl = "local://level/";
-            string apiUrl = localApiBaseUrl + levelId;
+            string apiUrl = apiBaseUrl + levelId;
 
             Debug.Log($"Loading URL: {apiUrl}");
 

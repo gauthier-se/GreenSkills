@@ -8,6 +8,16 @@ using UnityEngine.Networking;
 namespace Managers
 {
     /// <summary>
+    /// Accepts all SSL certificates. Required for Unity to connect to servers
+    /// using certificates (e.g. Let's Encrypt) that Unity's built-in CA store
+    /// does not trust.
+    /// </summary>
+    internal class AcceptAllCertificates : CertificateHandler
+    {
+        protected override bool ValidateCertificate(byte[] certificateData) => true;
+    }
+
+    /// <summary>
     /// Manages user authentication against the Go API.
     /// Handles login, registration, token persistence, and auto-login.
     /// Implements the Singleton pattern and persists across scene loads.
@@ -17,7 +27,7 @@ namespace Managers
         public static AuthManager Instance { get; private set; }
 
         [Header("API Configuration")]
-        [SerializeField] private string apiBaseUrl = "http://localhost:8080";
+        [SerializeField] private string apiBaseUrl = "https://api.greenskills.seyzeriat.com";
 
         private const string TOKEN_KEY = "AuthToken";
         private const string USER_JSON_KEY = "AuthUser";
@@ -166,14 +176,17 @@ namespace Managers
                 byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
                 request.downloadHandler = new DownloadHandlerBuffer();
+                request.certificateHandler = new AcceptAllCertificates();
+                request.useHttpContinue = false;
                 request.SetRequestHeader("Content-Type", "application/json");
 
                 var operation = request.SendWebRequest();
 
-                while (!operation.isDone)
-                {
-                    await Task.Yield();
-                }
+                // Use TaskCompletionSource to properly await UnityWebRequest
+                var tcs = new TaskCompletionSource<bool>();
+                operation.completed += _ => tcs.TrySetResult(true);
+                if (operation.isDone) tcs.TrySetResult(true);
+                await tcs.Task;
 
                 if (request.result == UnityWebRequest.Result.ConnectionError)
                 {

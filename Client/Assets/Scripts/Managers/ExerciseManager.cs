@@ -201,6 +201,8 @@ namespace Managers
         {
             using (UnityWebRequest request = UnityWebRequest.Get(apiUrl))
             {
+                request.certificateHandler = new AcceptAllCertificates();
+
                 // Attach JWT token for authenticated requests
                 if (AuthManager.Instance != null && AuthManager.Instance.IsAuthenticated)
                 {
