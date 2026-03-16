@@ -1,3 +1,4 @@
+using Data;
 using Data.Exercises;
 using TMPro;
 using UnityEngine;
@@ -17,30 +18,31 @@ namespace UI.Exercises
         [SerializeField] private TextMeshProUGUI trueButtonText;
         [SerializeField] private TextMeshProUGUI falseButtonText;
 
-        [Header("Feedback Colors")]
-        [SerializeField] private Color correctColor = new Color(0.2f, 0.8f, 0.2f);
-        [SerializeField] private Color incorrectColor = new Color(0.8f, 0.2f, 0.2f);
-        [SerializeField] private Color defaultColor = Color.white;
+        [Header("Theme")]
+        [SerializeField] private UITheme theme;
 
         private Image _trueButtonImage;
         private Image _falseButtonImage;
         private TrueFalseExerciseData _exerciseData;
+        private bool _selectedTrue;
 
         private void Awake()
         {
-            // Cache button images
-            if (trueButton != null)
+            CacheButtonImages();
+            SetupButtonListeners();
+        }
+
+        private void CacheButtonImages()
+        {
+            if (_trueButtonImage == null && trueButton != null)
             {
                 _trueButtonImage = trueButton.GetComponent<Image>();
             }
 
-            if (falseButton != null)
+            if (_falseButtonImage == null && falseButton != null)
             {
                 _falseButtonImage = falseButton.GetComponent<Image>();
             }
-
-            // Setup button listeners
-            SetupButtonListeners();
         }
 
         private void SetupButtonListeners()
@@ -84,8 +86,8 @@ namespace UI.Exercises
                 falseButtonText.text = "FAUX";
             }
 
-            // Reset colors
-            ResetButtonColors();
+            // Apply default theme styling
+            ApplyDefaultButtonStyle();
         }
 
         /// <summary>
@@ -95,6 +97,7 @@ namespace UI.Exercises
         {
             if (!isInteractable) return;
 
+            _selectedTrue = selectedTrue;
             Debug.Log($"TrueFalse: Player selected {(selectedTrue ? "TRUE" : "FALSE")}");
 
             // Disable further interaction
@@ -109,44 +112,54 @@ namespace UI.Exercises
         /// </summary>
         public override void ShowFeedback(bool isCorrect, object correctAnswer = null)
         {
-            if (_exerciseData == null) return;
+            if (_exerciseData == null || theme == null) return;
 
+            CacheButtonImages();
             bool correctValue = _exerciseData.isTrue;
 
-            // Highlight buttons based on correctness
-            if (_trueButtonImage != null)
+            // Correct answer button → success styling
+            if (correctValue)
             {
-                _trueButtonImage.color = correctValue ? correctColor : incorrectColor;
-            }
+                // True is the correct answer
+                if (_trueButtonImage != null) _trueButtonImage.color = theme.success;
+                SetButtonTextColor(true, theme.textOnDark);
 
-            if (_falseButtonImage != null)
-            {
-                _falseButtonImage.color = correctValue ? incorrectColor : correctColor;
-            }
-
-            // If the player was wrong, make the wrong choice more obvious
-            if (!isCorrect)
-            {
-                // The player's choice was the opposite of the correct answer
-                // So we need to show which one was their (wrong) choice
-                if (_exerciseData.isTrue)
+                if (isCorrect)
                 {
-                    // Correct was TRUE, player chose FALSE
-                    if (_falseButtonImage != null)
-                    {
-                        // Add visual indication this was their wrong choice
-                        _falseButtonImage.color = incorrectColor;
-                    }
+                    // Player chose correctly (True) — dim false button
+                    if (_falseButtonImage != null) _falseButtonImage.color = theme.neutral50;
+                    SetButtonTextColor(false, theme.textMuted);
                 }
                 else
                 {
-                    // Correct was FALSE, player chose TRUE
-                    if (_trueButtonImage != null)
-                    {
-                        _trueButtonImage.color = incorrectColor;
-                    }
+                    // Player chose wrong (False) — show error on false button
+                    if (_falseButtonImage != null) _falseButtonImage.color = theme.error;
+                    SetButtonTextColor(false, theme.textOnDark);
                 }
             }
+            else
+            {
+                // False is the correct answer
+                if (_falseButtonImage != null) _falseButtonImage.color = theme.success;
+                SetButtonTextColor(false, theme.textOnDark);
+
+                if (isCorrect)
+                {
+                    // Player chose correctly (False) — dim true button
+                    if (_trueButtonImage != null) _trueButtonImage.color = theme.neutral50;
+                    SetButtonTextColor(true, theme.textMuted);
+                }
+                else
+                {
+                    // Player chose wrong (True) — show error on true button
+                    if (_trueButtonImage != null) _trueButtonImage.color = theme.error;
+                    SetButtonTextColor(true, theme.textOnDark);
+                }
+            }
+
+            // Clear outlines on both buttons
+            SetButtonOutlineColor(true, Color.clear);
+            SetButtonOutlineColor(false, Color.clear);
         }
 
         /// <summary>
@@ -154,23 +167,44 @@ namespace UI.Exercises
         /// </summary>
         public override void Reset()
         {
-            ResetButtonColors();
+            ApplyDefaultButtonStyle();
             SetInteractable(true);
         }
 
         /// <summary>
-        /// Resets button colors to default.
+        /// Applies the default theme styling to both buttons.
         /// </summary>
-        private void ResetButtonColors()
+        private void ApplyDefaultButtonStyle()
         {
-            if (_trueButtonImage != null)
+            if (theme == null)
             {
-                _trueButtonImage.color = defaultColor;
+                Debug.LogWarning("TrueFalseController: UITheme is not assigned! Wire MainTheme in the Inspector.");
+                return;
             }
 
+            CacheButtonImages();
+
+            if (_trueButtonImage != null)
+                _trueButtonImage.color = theme.bgCard;
             if (_falseButtonImage != null)
+                _falseButtonImage.color = theme.bgCard;
+
+            SetButtonTextColor(true, theme.textPrimary);
+            SetButtonTextColor(false, theme.textPrimary);
+
+            SetButtonOutlineColor(true, theme.borderDefault);
+            SetButtonOutlineColor(false, theme.borderDefault);
+
+            // Update button color blocks
+            foreach (var button in new[] { trueButton, falseButton })
             {
-                _falseButtonImage.color = defaultColor;
+                if (button == null) continue;
+                var colors = button.colors;
+                colors.normalColor = theme.bgCard;
+                colors.highlightedColor = theme.bgSurface;
+                colors.pressedColor = theme.borderStrong;
+                colors.disabledColor = theme.neutral50;
+                button.colors = colors;
             }
         }
 
@@ -189,6 +223,22 @@ namespace UI.Exercises
             if (falseButton != null)
             {
                 falseButton.interactable = interactable;
+            }
+        }
+
+        private void SetButtonTextColor(bool isTrue, Color color)
+        {
+            var text = isTrue ? trueButtonText : falseButtonText;
+            if (text != null) text.color = color;
+        }
+
+        private void SetButtonOutlineColor(bool isTrue, Color color)
+        {
+            var button = isTrue ? trueButton : falseButton;
+            if (button != null)
+            {
+                var outline = button.GetComponent<Outline>();
+                if (outline != null) outline.effectColor = color;
             }
         }
     }
