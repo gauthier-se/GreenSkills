@@ -378,7 +378,8 @@ namespace Managers
 
             if (uiManager != null)
             {
-                uiManager.ShowVictoryScreen(score, starsEarned, hasNextLevel, rewards);
+                uiManager.ShowVictoryScreen(score, starsEarned, hasNextLevel, rewards,
+                    _currentLevelData?.Theme);
             }
         }
 
