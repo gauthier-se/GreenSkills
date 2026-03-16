@@ -42,7 +42,7 @@ namespace Managers
 
         // Exercise system state
         private ExerciseUIController _exerciseUIController;
-        private ExplanationPopupController _explanationPopup;
+        private FeedbackPanelController _feedbackPanel;
         private LevelData _currentLevelData;
         private List<BaseExerciseData> _currentExercises;
         private int _currentExerciseIndex;
@@ -135,11 +135,11 @@ namespace Managers
             _exerciseUIController = controller;
             _exerciseUIController.OnAnswerSubmitted += HandleAnswerSubmitted;
 
-            // Get the explanation popup reference
-            _explanationPopup = controller.GetExplanationPopup();
-            if (_explanationPopup == null)
+            // Get the feedback panel reference
+            _feedbackPanel = controller.GetFeedbackPanel();
+            if (_feedbackPanel == null)
             {
-                Debug.LogWarning("[GameManager] ExplanationPopupController not found on ExerciseUIController. Explanations will be skipped.");
+                Debug.LogWarning("[GameManager] FeedbackPanelController not found on ExerciseUIController. Explanations will be skipped.");
             }
 
             Debug.Log("[GameManager] ExerciseUIController registered.");
@@ -257,22 +257,22 @@ namespace Managers
         }
 
         /// <summary>
-        /// Shows the explanation popup, waits for dismissal, then loads the next exercise.
-        /// Falls back to a timed delay if no popup is configured.
+        /// Shows the feedback panel, waits for dismissal, then loads the next exercise.
+        /// Falls back to a timed delay if no panel is configured.
         /// </summary>
         private IEnumerator ShowFeedbackAndAdvance(BaseExerciseData exercise, bool isCorrect)
         {
-            if (_explanationPopup != null && !string.IsNullOrEmpty(exercise.explanation))
+            if (_feedbackPanel != null && !string.IsNullOrEmpty(exercise.explanation))
             {
-                // Wait briefly so the player sees the visual feedback before the popup
+                // Wait briefly so the player sees the visual feedback before the panel
                 yield return new WaitForSeconds(0.5f);
 
-                _explanationPopup.Show(exercise.explanation, isCorrect);
-                yield return new WaitUntil(() => !_explanationPopup.IsVisible());
+                _exerciseUIController?.ShowFeedbackPanel(exercise.explanation, isCorrect);
+                yield return new WaitUntil(() => !_feedbackPanel.IsVisible());
             }
             else
             {
-                // Fallback: use the fixed delay if no popup is available
+                // Fallback: use the fixed delay if no panel is available
                 yield return new WaitForSeconds(feedbackDelay);
             }
 
@@ -290,17 +290,17 @@ namespace Managers
         }
 
         /// <summary>
-        /// Shows the explanation popup, waits for dismissal, then triggers game over.
-        /// Falls back to a timed delay if no popup is configured.
+        /// Shows the feedback panel, waits for dismissal, then triggers game over.
+        /// Falls back to a timed delay if no panel is configured.
         /// </summary>
         private IEnumerator ShowFeedbackAndGameOver(BaseExerciseData exercise, bool isCorrect)
         {
-            if (_explanationPopup != null && !string.IsNullOrEmpty(exercise.explanation))
+            if (_feedbackPanel != null && !string.IsNullOrEmpty(exercise.explanation))
             {
                 yield return new WaitForSeconds(0.5f);
 
-                _explanationPopup.Show(exercise.explanation, isCorrect);
-                yield return new WaitUntil(() => !_explanationPopup.IsVisible());
+                _exerciseUIController?.ShowFeedbackPanel(exercise.explanation, isCorrect);
+                yield return new WaitUntil(() => !_feedbackPanel.IsVisible());
             }
             else
             {
@@ -414,7 +414,7 @@ namespace Managers
                 _exerciseUIController = null;
             }
 
-            _explanationPopup = null;
+            _feedbackPanel = null;
 
             sceneManager?.LoadScene(mainMenuSceneName);
         }
