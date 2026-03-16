@@ -24,9 +24,7 @@ namespace Managers
         [SerializeField] private List<GameObject> lifeHearts;
 
         [Header("Game Over Panel")]
-        [SerializeField] private GameObject gameOverPanel;
-        [SerializeField] private Button gameOverRetryButton;
-        [SerializeField] private Button gameOverMenuButton;
+        [SerializeField] private GameOverPanelController gameOverPanelController;
 
         [Header("Level Summary")]
         [SerializeField] private LevelSummaryController levelSummaryController;
@@ -86,10 +84,11 @@ namespace Managers
         }
 
         /// <summary>
-        /// Shows the Game Over panel with retry and menu options.
-        /// Auto-discovers buttons by name if not assigned in the Inspector.
+        /// Shows the Game Over panel with score summary and brand styling.
         /// </summary>
-        public void ShowGameOverScreen()
+        /// <param name="exercisesCompleted">Number of exercises completed before game over.</param>
+        /// <param name="totalExercises">Total number of exercises in the level.</param>
+        public void ShowGameOverScreen(int exercisesCompleted, int totalExercises)
         {
             Debug.Log("[UIManager] Displaying Game Over screen");
 
@@ -98,50 +97,13 @@ namespace Managers
                 quizPanel.SetActive(false);
             }
 
-            if (gameOverPanel == null)
+            if (gameOverPanelController == null)
             {
-                Debug.LogWarning("[UIManager] GameOverPanel is not assigned!");
+                Debug.LogWarning("[UIManager] GameOverPanelController is not assigned!");
                 return;
             }
 
-            gameOverPanel.SetActive(true);
-
-            // Auto-discover buttons if not assigned in Inspector
-            if (gameOverRetryButton == null)
-                gameOverRetryButton = FindButtonInPanel(gameOverPanel, "RetryButton");
-            if (gameOverMenuButton == null)
-                gameOverMenuButton = FindButtonInPanel(gameOverPanel, "MenuButton");
-
-            if (gameOverRetryButton != null)
-            {
-                gameOverRetryButton.onClick.RemoveAllListeners();
-                gameOverRetryButton.onClick.AddListener(() => GameManager.Instance.RestartCurrentLevel());
-            }
-            else
-            {
-                Debug.LogWarning("[UIManager] GameOver RetryButton not found!");
-            }
-
-            if (gameOverMenuButton != null)
-            {
-                gameOverMenuButton.onClick.RemoveAllListeners();
-                gameOverMenuButton.onClick.AddListener(() => GameManager.Instance.ReturnToMenu());
-            }
-            else
-            {
-                Debug.LogWarning("[UIManager] GameOver MenuButton not found!");
-            }
-        }
-
-        /// <summary>
-        /// Finds a Button component in a panel by GameObject name.
-        /// </summary>
-        private Button FindButtonInPanel(GameObject panel, string buttonName)
-        {
-            Transform found = panel.transform.Find(buttonName);
-            if (found != null)
-                return found.GetComponent<Button>();
-            return null;
+            gameOverPanelController.Show(exercisesCompleted, totalExercises);
         }
 
         /// <summary>
@@ -178,7 +140,7 @@ namespace Managers
         /// </summary>
         public void ResetToQuizView()
         {
-            if (gameOverPanel != null) gameOverPanel.SetActive(false);
+            if (gameOverPanelController != null) gameOverPanelController.Hide();
             if (levelSummaryController != null) levelSummaryController.Hide();
             if (quizPanel != null) quizPanel.SetActive(true);
         }

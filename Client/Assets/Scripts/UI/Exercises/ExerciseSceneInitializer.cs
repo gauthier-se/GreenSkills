@@ -11,7 +11,7 @@ namespace UI.Exercises
     public class ExerciseSceneInitializer : MonoBehaviour
     {
         [Header("End Game Panels")]
-        [SerializeField] private GameObject gameOverPanel;
+        [SerializeField] private GameOverPanelController gameOverPanelController;
         [SerializeField] private LevelSummaryController levelSummaryController;
 
         private ExerciseUIController _uiController;
@@ -36,9 +36,9 @@ namespace UI.Exercises
         /// </summary>
         public void ShowGameOverPanel()
         {
-            if (gameOverPanel != null)
+            if (gameOverPanelController != null)
             {
-                gameOverPanel.SetActive(true);
+                gameOverPanelController.gameObject.SetActive(true);
             }
         }
 
@@ -58,7 +58,7 @@ namespace UI.Exercises
         /// </summary>
         public void ResetToExerciseView()
         {
-            if (gameOverPanel != null) gameOverPanel.SetActive(false);
+            if (gameOverPanelController != null) gameOverPanelController.Hide();
             if (levelSummaryController != null) levelSummaryController.Hide();
         }
     }
