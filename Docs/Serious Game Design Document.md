@@ -596,3 +596,13 @@ Inventaire du matériel et des services nécessaires pour le déploiement de l'i
     - **Versionning :** GitHub pour héberger le code source.
 
     - **Google Play Console :** Compte développeur pour distribuer l'APK ou publier la bêta.
+
+
+---
+
+## Documents associés
+
+- [Concept du Jeu](Game%20concept.md)
+- [Business Model Canvas](Business%20Model%20Canvas.md)
+- [Documentation Technique](Documentation%20Technique.md)
+- [README (accueil du projet)](../README.md)

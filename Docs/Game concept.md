@@ -88,3 +88,12 @@ Un écran principal en vue isométrique montrant :
 - **Panneau supérieur :** Progression globale et indicateur de "Série" (streak).
 - **Panneaux latéraux :** Ressources (EcoCoins, Budget) et liste des tâches/événements RSE.
 - **Barre inférieure :** Accès au profil et à la boutique.
+
+---
+
+## Documents associés
+
+- [Serious Game Design Document (GDD)](Serious%20Game%20Design%20Document.md)
+- [Business Model Canvas](Business%20Model%20Canvas.md)
+- [Documentation Technique](Documentation%20Technique.md)
+- [README (accueil du projet)](../README.md)
