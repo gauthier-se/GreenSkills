@@ -1,16 +1,19 @@
 ---
 theme: none
-title: GreenSkills — Pitch
+title: GreenSkills — Pitch Deck
 author: Gauthier Seyzeriat
 colorSchema: light
 aspectRatio: 16/9
 canvasWidth: 980
 transition: slide-left
+favicon: /logo.svg
 fonts:
   sans: Inter
   mono: Fira Code
 themeConfig:
   primary: '#1d7a4f'
+head: |
+  <script defer src="https://analytics.seyzeriat.com/script.js" data-website-id="1662ac98-2f01-40f5-92f0-7d53c24e57b6"></script>
 class: dark-slide centered
 ---
 
