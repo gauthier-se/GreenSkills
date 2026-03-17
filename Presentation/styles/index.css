@@ -1,0 +1,309 @@
+:root {
+  /* Brand */
+  --gs-primary: #1d7a4f;
+  --gs-primary-light: #2aa86e;
+  --gs-primary-dark: #0f5435;
+  --gs-accent-gold: #e8a020;
+
+  /* Backgrounds */
+  --gs-bg-light: #f2f7f4;
+  --gs-bg-dark: #0a2e1c;
+  --gs-bg-dark-surface: #132b1e;
+
+  /* Text */
+  --gs-text-primary: #1a1a18;
+  --gs-text-secondary: #4a5758;
+  --gs-text-muted: #7a8f86;
+  --gs-text-light: #ffffff;
+
+  /* Semantic */
+  --gs-success: #2aa86e;
+  --gs-error: #d94f3d;
+  --gs-warning: #e8a22b;
+
+  /* Slidev overrides */
+  --slidev-theme-primary: #1d7a4f;
+}
+
+/* ─── Base layout — all slides ─── */
+.slidev-layout {
+  background: var(--gs-bg-light);
+  color: var(--gs-text-primary);
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0px, transparent 18px,
+    rgba(29, 122, 79, 0.03) 18px, rgba(29, 122, 79, 0.03) 19px
+  );
+  padding: 48px 64px !important;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* ─── Dark slides ───
+   Cover both: class on layout itself (.slidev-layout.dark-slide)
+   and class on parent wrapper (.dark-slide .slidev-layout) */
+.slidev-layout.dark-slide,
+.dark-slide .slidev-layout,
+.dark-slide.slidev-layout {
+  background: var(--gs-bg-dark) !important;
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0px, transparent 18px,
+    rgba(42, 168, 110, 0.06) 18px, rgba(42, 168, 110, 0.06) 19px
+  ) !important;
+  color: var(--gs-text-light) !important;
+}
+
+.slidev-layout.dark-slide h1,
+.slidev-layout.dark-slide h2,
+.slidev-layout.dark-slide h3,
+.dark-slide .slidev-layout h1,
+.dark-slide .slidev-layout h2,
+.dark-slide .slidev-layout h3,
+.dark-slide h1,
+.dark-slide h2,
+.dark-slide h3 {
+  color: var(--gs-text-light) !important;
+}
+
+.slidev-layout.dark-slide p,
+.slidev-layout.dark-slide li,
+.dark-slide .slidev-layout p,
+.dark-slide .slidev-layout li,
+.dark-slide p,
+.dark-slide li {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.slidev-layout.dark-slide strong,
+.dark-slide .slidev-layout strong,
+.dark-slide strong {
+  color: var(--gs-accent-gold) !important;
+}
+
+/* ─── Centered slides ─── */
+.slidev-layout.centered,
+.centered .slidev-layout {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center;
+}
+
+/* ─── Typography ─── */
+h1 {
+  color: var(--gs-primary) !important;
+  font-weight: 800 !important;
+  font-size: 2rem !important;
+  margin-bottom: 16px !important;
+}
+
+h2 {
+  color: var(--gs-primary-dark) !important;
+  font-weight: 700 !important;
+}
+
+h3 {
+  color: var(--gs-primary) !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+  margin-bottom: 8px !important;
+}
+
+a {
+  color: var(--gs-primary-light) !important;
+  text-decoration: underline;
+}
+
+strong {
+  color: var(--gs-primary-dark);
+}
+
+/* ─── Utility classes ─── */
+.text-gold {
+  color: var(--gs-accent-gold) !important;
+}
+
+.text-green {
+  color: var(--gs-primary-light) !important;
+}
+
+.text-green-dark {
+  color: var(--gs-primary-dark) !important;
+}
+
+.text-muted {
+  color: var(--gs-text-muted) !important;
+}
+
+.text-white {
+  color: var(--gs-text-light) !important;
+}
+
+/* ─── Stat numbers ─── */
+.stat-number {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--gs-primary-light);
+  line-height: 1;
+}
+
+.slidev-layout.dark-slide .stat-number,
+.dark-slide .stat-number {
+  color: var(--gs-accent-gold) !important;
+}
+
+/* ─── Comparison table ─── */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.85em;
+  margin-top: 12px;
+}
+
+thead th {
+  background: var(--gs-primary) !important;
+  color: white !important;
+  padding: 12px 16px;
+  font-weight: 600;
+  text-align: left;
+}
+
+tbody td {
+  padding: 10px 16px;
+  border-bottom: 1px solid #d9e6da;
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(29, 122, 79, 0.04);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ─── Cards ─── */
+.card {
+  background: white;
+  border: 1px solid #d9e6da;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.slidev-layout.dark-slide .card,
+.dark-slide .card {
+  background: var(--gs-bg-dark-surface);
+  border-color: rgba(42, 168, 110, 0.2);
+}
+
+/* ─── Badges ─── */
+.badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 99px;
+  font-size: 0.75em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.badge-green {
+  background: rgba(42, 168, 110, 0.15);
+  color: var(--gs-primary-light);
+}
+
+.badge-gold {
+  background: rgba(232, 160, 32, 0.15);
+  color: var(--gs-accent-gold);
+}
+
+/* ─── Cover slide ─── */
+.cover-logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 24px;
+}
+
+.cover-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.cover-tagline {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: var(--gs-text-muted) !important;
+  text-transform: uppercase;
+}
+
+/* ─── List styling ─── */
+li {
+  margin-bottom: 0.4em;
+  line-height: 1.5;
+}
+
+li::marker {
+  color: var(--gs-primary-light);
+}
+
+.slidev-layout.dark-slide li::marker,
+.dark-slide li::marker {
+  color: var(--gs-accent-gold);
+}
+
+/* ─── Grid layout helpers ─── */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+/* ─── Callout box ─── */
+.callout {
+  padding: 16px 20px;
+  background: rgba(42, 168, 110, 0.08);
+  border-left: 4px solid var(--gs-primary-light);
+  border-radius: 0 8px 8px 0;
+  margin-top: 20px;
+}
+
+/* ─── Progress / timeline ─── */
+.timeline-item {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gs-primary-light);
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+/* ─── Slidev page number ─── */
+.slidev-page-number {
+  color: var(--gs-text-muted);
+}
+
+.slidev-layout.dark-slide .slidev-page-number,
+.dark-slide .slidev-page-number {
+  color: rgba(255, 255, 255, 0.3);
+}
