@@ -82,7 +82,7 @@ Tous les Managers implémentent le pattern **Singleton** avec `DontDestroyOnLoad
 | Manager | Responsabilité |
 |---------|---------------|
 | **GameManager** | Coordinateur central : chargement des niveaux, gestion des vies, validation des réponses, flux de jeu (exercice → feedback → suivant), navigation entre scènes |
-| **AuthManager** | Authentification (login, register, logout), stockage du JWT dans PlayerPrefs, auto-login au démarrage. URL API : `https://api.greenskills.seyzeriat.com` |
+| **AuthManager** | Authentification (login, register, logout), stockage du JWT dans PlayerPrefs, auto-login au démarrage. URL API : `https://greenskills-api.seyzeriat.com` |
 | **ExerciseManager** | Chargement des niveaux depuis l'API REST ou des fichiers JSON locaux, conversion DTO → Data via ExerciseFactory, cache du nombre de niveaux |
 | **GamificationManager** | Gestion XP, EcoCoins, streaks quotidiens, niveaux joueur. Événements : `OnXPGained`, `OnLevelUp`, `OnCoinsEarned`, `OnStreakUpdated` |
 | **UIManager** | Mise à jour des éléments UI (barre de progression, vies, boutons), affichage des écrans de victoire et game over |

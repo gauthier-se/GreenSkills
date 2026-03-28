@@ -25,7 +25,7 @@ namespace Managers
 
         [Header("API Configuration")]
         [Tooltip("API endpoint URL for loading levels. Use 'local://level/' for offline mock data.")]
-        [SerializeField] private string apiBaseUrl = "https://api.greenskills.seyzeriat.com/api/levels/";
+        [SerializeField] private string apiBaseUrl = "https://greenskills-api.seyzeriat.com/api/levels/";
 
         private void OnEnable()
         {
