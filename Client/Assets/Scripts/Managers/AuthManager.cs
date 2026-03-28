@@ -27,7 +27,7 @@ namespace Managers
         public static AuthManager Instance { get; private set; }
 
         [Header("API Configuration")]
-        [SerializeField] private string apiBaseUrl = "https://api.greenskills.seyzeriat.com";
+        [SerializeField] private string apiBaseUrl = "https://greenskills-api.seyzeriat.com";
 
         private const string TOKEN_KEY = "AuthToken";
         private const string USER_JSON_KEY = "AuthUser";
